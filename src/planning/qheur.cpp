@@ -25,6 +25,7 @@
  * $Id: qheur.cpp 2962 2008-11-02 15:04:43Z mtjspaan $
  */
 
+#include <list>
 
 using namespace std;
 

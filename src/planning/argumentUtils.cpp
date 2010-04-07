@@ -25,6 +25,8 @@
  * $Id: argumentUtils.cpp 3638 2009-08-31 12:49:23Z mtjspaan $
  */
 
+#include <list>
+
 using namespace std;
 
 

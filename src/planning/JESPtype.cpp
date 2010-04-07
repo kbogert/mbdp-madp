@@ -25,6 +25,7 @@
  * $Id: JESPtype.cpp 3604 2009-08-25 10:52:24Z mtjspaan $
  */
 
+#include <list>
 
 using namespace std;
 

@@ -25,6 +25,7 @@
  * $Id: BGIP_SolverType.cpp 3032 2008-11-15 16:03:36Z faolieho $
  */
 
+#include <list>
 
 using namespace std;
 
