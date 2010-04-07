@@ -1,0 +1,83 @@
+MultiAgentDecisionProcess (MADP) is a toolbox for scientific research
+in decision-theoretic planning and learning in multiagent systems.  It
+is designed to be rather general, but most effort has been put in
+planning algorithms for discrete Dec-POMDPs.
+
+Comments, bug reports, patches, etc, are welcome. A mailinglist is
+available at madp-users@isr.ist.utl.pt .
+
+Authors:
+Frans Oliehoek <f.a.oliehoek@uva.nl>
+Intelligent Systems Lab Amsterdam, University of Amsterdam,
+Amsterdam, The Netherlands
+
+Matthijs Spaan <mtjspaan@isr.ist.utl.pt>
+Institute for Systems and Robotics, Instituto Superior Tecnico,
+Lisbon, Portugal
+
+========================================================================
+Required software (as Debian package names)
+
+libtool (libtool)
+GCC 3.4 or newer (g++)
+
+Optional software:
+
+Doxygen (doxygen, graphviz) [for generating documentation]
+
+The software also uses part of the Boost C++ libraries, but due to
+potential compatibility issues we ship the relevant parts in
+src/boost. The software is being developed on Debian GNU/Linux Lenny,
+using the i386 and amd64 flavors, but should work on any recent Linux
+distribution. Other operating systems have not been tested.
+
+========================================================================
+Installation
+
+Execute the following
+
+./configure
+make
+make install [optional]
+
+========================================================================
+Documentation
+
+See doc/MADPToolbox.pdf.
+
+To (re)generate documentation from source
+make htmldoc
+
+Open doc/html/index.html in a webbrowser
+
+========================================================================
+Getting started
+
+As a simple example, we can solve the DecTiger problem optimally for
+horizon 3 as follows:
+
+src/examples/GMAA DT -h 3 -q
+or
+src/examples/GMAA problems/dectiger.dpomdp -h 3 -q
+
+you should get output like:
+value=5.19081 
+
+The first command uses the built-in DecTiger class (ProblemDecTiger),
+the second parses the dectiger.dpomdp file. Check src/examples for
+more example programs, and problems/README as well as
+http://www.isr.ist.utl.pt/~mtjspaan/decpomdp for more problem
+definitions.
+
+========================================================================
+Acknowledgments
+
+The work reported here is part of the Interactive Collaborative
+Information Systems (ICIS) project, supported by the Dutch Ministry of
+Economic Affairs, grant nr: BSIK03024.  This work was partially
+supported by Fundacao para a Ciencia e a Tecnologia (ISR/IST
+pluriannual funding) through the POS_Conhecimento Program that
+includes FEDER funds and through grant PTDC/EEA-ACR/73266/2006.
+
+Release 0.2
+$Id: README 3642 2009-09-02 13:27:20Z mtjspaan $
