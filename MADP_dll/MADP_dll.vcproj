@@ -216,10 +216,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\utils\analyzeRewardResults.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\src\planning\argumentHandlers.cpp"
 				>
 			</File>
@@ -300,18 +296,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\utils\evaluateJointPolicyPureVector.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\utils\evaluatePerseusPolicy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\utils\evaluateRandomPolicy.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\src\support\FixedCapacityPriorityQueue.cpp"
 				>
 			</File>
@@ -321,10 +305,6 @@
 			</File>
 			<File
 				RelativePath="..\src\planning\GeneralizedMAAStarPlannerForDecPOMDPDiscrete.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\utils\getAvgReward.cpp"
 				>
 			</File>
 			<File
@@ -585,14 +565,6 @@
 			</File>
 			<File
 				RelativePath="..\src\base\POSGDiscrete.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\utils\printJointPolicyPureVector.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\utils\printProblem.cpp"
 				>
 			</File>
 			<File
