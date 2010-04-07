@@ -1351,14 +1351,16 @@ PlanningUnitMADPDiscrete::GetJointActionObservationHistoryVectors
     catch(E& e){};
     
     Index t = GetTimeStepForJAOHI(jaohI);
-    Index jaIs_arr[t];
-    Index joIs_arr[t];
+    Index * jaIs_arr = new Index[t];
+    Index * joIs_arr = new Index[t];
     GetJointActionObservationHistoryArrays(jaohI, t, jaIs_arr, joIs_arr );
     for(size_t t2 = 0; t2 < t; t2++)
     {
         jaIs.push_back(jaIs_arr[t2]);
         joIs.push_back(joIs_arr[t2]);
     }
+	delete jaIs_arr;
+	delete joIs_arr;
 }
 
 void 
@@ -1792,7 +1794,7 @@ PlanningUnitMADPDiscrete::JointToIndividualObservationHistoryIndices(Index
         johI) const
 {
     Index t = GetTimeStepForJOHI(johI);
-    Index jo_array[t];
+    Index * jo_array = new Index[t];
     GetJointObservationHistoryArrays(johI, t, jo_array );
 
     //convert joint observations -> indiv. observations
@@ -1817,6 +1819,7 @@ PlanningUnitMADPDiscrete::JointToIndividualObservationHistoryIndices(Index
                                                      indivO_vec.at(agentI) );
         ohI_vec.push_back(this_agentOHI);
     }
+	delete jo_array;
     return(ohI_vec);
 }
 
@@ -1879,8 +1882,8 @@ PlanningUnitMADPDiscrete::JointAOHIndexToIndividualActionObservationVectors(
         ) const
 {
     Index t = GetTimeStepForJAOHI(jaohI);
-    Index jo_array[t];
-    Index ja_array[t];
+    Index * jo_array = new Index[t];
+    Index * ja_array = new Index[t];
 
     //TODO: check we might be doing duplicate work: within 
     //GetJointActionObservationHistoryArrays we convert joint act-obs indices to
@@ -1905,6 +1908,8 @@ PlanningUnitMADPDiscrete::JointAOHIndexToIndividualActionObservationVectors(
             indivA_vec[agentI][ts] = indivA_IndicesThisT[agentI];
         }
     }
+	delete jo_array;
+	delete ja_array;
 }
             
 vector<Index> 
@@ -2308,8 +2313,8 @@ PlanningUnitMADPDiscrete::GetJAOHProbs(
     Index t = GetTimeStepForJAOHI(jaohI);
     Index t_p = GetTimeStepForJAOHI(p_jaohI);
     
-    Index jaIs[t];
-    Index joIs[t];
+    Index * jaIs = new Index[t];
+    Index * joIs = new Index[t];
     GetJointActionObservationHistoryArrays(jaohI, t, jaIs, joIs);      
 #if DEBUG_PUD_JAOHPROBS
     vector<Index> jaIsv,joIsv;
@@ -2328,18 +2333,28 @@ PlanningUnitMADPDiscrete::GetJAOHProbs(
         cout << "jaIs["<<i<<"]=" << jaIs[i] << " ";
     cout << endl;
 #endif
-    Index p_jaIs[t_p];
-    Index p_joIs[t_p];
+    Index * p_jaIs = new Index[t_p];
+    Index * p_joIs = new Index[t_p];
     
     if(p_jaohI != 0)
     {
         //check that p_jaohI is indeed a predecessor of jaohI, this consists of
         //two checks 1) the (quick) stage check::
-        if (t_p >= t)
+		if (t_p >= t) {
+			delete jaIs;
+			delete joIs;
+			delete p_jaIs;
+			delete p_joIs;
             return (0.0);
+		}
 
-        if(t_p == 0)
+		if(t_p == 0) {
+			delete jaIs;
+			delete joIs;
+			delete p_jaIs;
+			delete p_joIs;
             throw E(" p_jaohI != 0 but t_p == 0 ");
+		}
 
         //and 2) the consistency check
         GetJointActionObservationHistoryArrays(p_jaohI, t_p, p_jaIs, p_joIs); 
@@ -2350,6 +2365,11 @@ PlanningUnitMADPDiscrete::GetJAOHProbs(
                 ; //consistent
             else
             {
+				delete jaIs;
+				delete joIs;
+				delete p_jaIs;
+				delete p_joIs;
+
                 cerr << "GetJAOHProbs:: Warning pred. inconsistent with requested jaohI" << endl;
                 return (0.0); // p_jaohI is inconsistent with jaohI.
             }
@@ -2370,6 +2390,12 @@ PlanningUnitMADPDiscrete::GetJAOHProbs(
             double pr = _m_jaohProbs[jaohI];
             double p_pr = _m_jaohProbs[p_jaohI];
             double pr_cond = pr / p_pr;
+
+			delete jaIs;
+			delete joIs;
+			delete p_jaIs;
+			delete p_joIs;
+
             return pr_cond;
         }
         else
@@ -2395,6 +2421,11 @@ PlanningUnitMADPDiscrete::GetJAOHProbs(
             //jaohI, 
             p_jaohI, 
             jpol);
+
+	delete jaIs;
+	delete joIs;
+	delete p_jaIs;
+	delete p_joIs;
 
     return(p);
 }

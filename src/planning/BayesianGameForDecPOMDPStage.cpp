@@ -229,11 +229,12 @@ void BayesianGameForDecPOMDPStage::Fill_joI_Array(const Index ts,
     for(Index agentI=0; agentI < GetNrAgents(); agentI++)
     {
         indOHI[agentI] += firstOHtsI[agentI];
-        Index obsArr[ts];
+        Index * obsArr = new Index[ts];
         _m_pu->GetObservationHistoryArrays(agentI, indOHI[agentI], ts, obsArr);
         //now obsArr is filled and can be copied into indivObservations
         for(Index tI=0; tI < ts; tI++)
             indivObservations.at(tI).at(agentI) = obsArr[tI];
+		delete obsArr;
     }
 
     for(Index tI=0; tI < ts; tI++)
@@ -518,7 +519,7 @@ void BayesianGameForDecPOMDPStage::Initialize()
         const vector<Index> indTypes = bg_ts->JointToIndividualTypeIndices(jtI);
 
         //array for the joint observations at ts=1,...,ts
-        Index joI_arr[ts];
+        Index * joI_arr = new Index[ts];
         Fill_joI_Array(ts, indTypes, firstOHtsI, joI_arr);
 
         //we don't want to be dependent on the generation of joint
@@ -530,7 +531,7 @@ void BayesianGameForDecPOMDPStage::Initialize()
         // previous policy jpolPrevTs
 
         //first get all actions taken
-        Index jaI_arr[ts];//the taken joint actions at t=0,...,ts-1
+        Index * jaI_arr = new Index[ts];//the taken joint actions at t=0,...,ts-1
         Fill_jaI_Array(ts, joI_arr, jpolPrevTs, jaI_arr);
         //now we know the taken actions and the observation history, so we 
         //can reconstruct the joint action-observation history and its 
@@ -578,6 +579,8 @@ void BayesianGameForDecPOMDPStage::Initialize()
                 bg_ts->SetUtility(jtI, jaI, 0);
         }
     
+		delete jaI_arr;
+		delete joI_arr;
     }//end for jtI
     //now the Bayesian game is constructed completely.
 

@@ -227,15 +227,16 @@ vector<Index> IndexTools::JointToIndividualIndicesStepSize(Index jointI,
 {
     Index remainder = jointI;
 
-    Index resultArr[vec_size];
+    Index * resultArr = new Index[vec_size];
     for(Index i=0; i < vec_size ; i++)
     {
         Index aI = remainder / step_size[i];
         resultArr[i] = aI;//store this indiv. index
         //remainder = remainder %  step_size[i];
         remainder -= step_size[i] * aI;
-    }
+	}
     vector<Index> result(&resultArr[0], &resultArr[vec_size]);
+	delete resultArr;
     return(result);
 }
 
@@ -247,7 +248,7 @@ vector<Index> IndexTools::JointToIndividualIndicesStepSize(
 {
     Index remainder = jointI;
 
-    Index resultArr[vec_size];
+    Index * resultArr = new Index[vec_size];
     for(Index i=0; i < vec_size ; i++)
     {
         Index aI = remainder / step_size[i];
@@ -256,6 +257,7 @@ vector<Index> IndexTools::JointToIndividualIndicesStepSize(
         remainder -= step_size[i] * aI;
     }
     vector<Index> result(&resultArr[0], &resultArr[vec_size]);
+	delete resultArr;
     return(result);
 }
 std::vector<Index> IndexTools::JointToIndividualIndicesStepSize(
@@ -493,7 +495,7 @@ vector<LIndex> IndexTools::JointToIndividualIndicesStepSize(LIndex jointI,
 {
     LIndex remainder = jointI;
 
-    LIndex resultArr[vec_size];
+    LIndex * resultArr = new LIndex[vec_size];
     for(LIndex i=0; i < vec_size ; i++)
     {
         LIndex aI = remainder / step_size[i];
@@ -502,6 +504,7 @@ vector<LIndex> IndexTools::JointToIndividualIndicesStepSize(LIndex jointI,
         remainder -= step_size[i] * aI;
     }
     vector<LIndex> result(&resultArr[0], &resultArr[vec_size]);
+	delete resultArr;
     return(result);
 }
 vector<LIndex> IndexTools::JointToIndividualIndicesStepSize(LIndex jointI, 
@@ -509,7 +512,7 @@ vector<LIndex> IndexTools::JointToIndividualIndicesStepSize(LIndex jointI,
 {
     LIndex remainder = jointI;
 
-    LIndex resultArr[vec_size];
+    LIndex * resultArr = new LIndex[vec_size];
     for(LIndex i=0; i < vec_size ; i++)
     {
         LIndex aI = remainder / step_size[i];
@@ -518,6 +521,7 @@ vector<LIndex> IndexTools::JointToIndividualIndicesStepSize(LIndex jointI,
         remainder -= step_size[i] * aI;
     }
     vector<LIndex> result(&resultArr[0], &resultArr[vec_size]);
+	delete resultArr;
     return(result);
 }
 
