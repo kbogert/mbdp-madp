@@ -27,6 +27,7 @@
 
 #include "MADPComponentDiscreteStates.h"
 #include <stdlib.h>
+#include <float.h>
 
 using namespace std;
 
@@ -78,7 +79,7 @@ bool MADPComponentDiscreteStates::SetInitialized(bool b)
                 validISD=false;
             if(*it>1)
                 validISD=false;
-            if(isnan(*it))
+            if(_isnan(*it))
                 validISD=false;
             sum+=*it;
         }

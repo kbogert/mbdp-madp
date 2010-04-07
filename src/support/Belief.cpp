@@ -147,7 +147,7 @@ bool Belief::SanityCheck() const
             return(false);
         if(*it>1)
             return(false);
-        if(isnan(*it))
+        if(_isnan(*it))
             return(false);
         sum+=*it;
     }

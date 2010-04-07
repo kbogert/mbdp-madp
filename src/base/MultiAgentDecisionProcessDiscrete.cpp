@@ -228,7 +228,7 @@ bool MultiAgentDecisionProcessDiscrete::SanityCheck(void)
                         GetStateName(from)<<"," << GetJointActionName(a) << ")";
                     throw E(ss);
                 }
-                if(isnan(p))
+                if(_isnan(p))
                 {
                     sane=false;
                     stringstream ss;
@@ -279,7 +279,7 @@ bool MultiAgentDecisionProcessDiscrete::SanityCheck(void)
                        << ")";
                     throw E(ss);
                 }
-                if(isnan(p))
+                if(_isnan(p))
                 {
                     stringstream ss;
                     ss << "MultiAgentDecisionProcessDiscrete::SanityCheck "
