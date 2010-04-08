@@ -3020,7 +3020,7 @@ string PlanningUnitMADPDiscrete::SoftPrintObservationHistory(Index agentI,
     else
     {
         Index t = GetTimeStepForOHI(agentI, ohIndex);
-        Index obs[t];
+        Index * obs = new Index[t];
         GetObservationHistoryArrays(agentI, ohIndex, t, obs);
         stringstream ss;
         ss << "(";
@@ -3032,6 +3032,7 @@ string PlanningUnitMADPDiscrete::SoftPrintObservationHistory(Index agentI,
             if(t2 + 1 < t)
                 ss << ",";
         }
+		delete obs;
         ss << ")";
         s = ss.str();
     }
