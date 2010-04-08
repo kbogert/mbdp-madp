@@ -179,7 +179,7 @@ class MultiAgentDecisionProcessDiscreteInterface :
         virtual Index SampleInitialState(void) const = 0;
 
         /// Returns a pointer to a copy of this class.
-        virtual MultiAgentDecisionProcessDiscreteInterface* Clone() const = 0;
+ //       virtual MultiAgentDecisionProcessDiscreteInterface* Clone() const = 0;
 
         /**\brief Prints some information on the 
          * MultiAgentDecisionProcessDiscreteInterface.

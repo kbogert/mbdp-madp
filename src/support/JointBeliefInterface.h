@@ -77,7 +77,7 @@ public:
                           Index lastJAI, Index newJOI) = 0;
 
     /// Returns a pointer to a copy of this class.
-    virtual JointBeliefInterface* Clone() const = 0;
+//    virtual JointBeliefInterface* Clone() const = 0;
 
 };
 

@@ -83,7 +83,7 @@ class DecPOMDPInterface : public virtual POSGInterface
         virtual void SetReward(State* s, JointAction* ja, double r) = 0;
         
         /// Returns a pointer to a copy of this class.
-        virtual DecPOMDPInterface* Clone() const = 0;
+  //      virtual DecPOMDPInterface* Clone() const = 0;
 };
 
 #endif //! _DECPOMDPINTERFACE_H_

@@ -78,7 +78,7 @@ class POSGDiscreteInterface :
         virtual double GetRewardForAgent(Index agentI, Index sI, Index jaI) 
                 const = 0;
         /// Returns a copy of this class.
-        virtual POSGDiscreteInterface* Clone() const = 0;
+//        virtual POSGDiscreteInterface* Clone() const = 0;
         
 };
 
