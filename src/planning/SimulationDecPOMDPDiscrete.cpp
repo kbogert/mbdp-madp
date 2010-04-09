@@ -65,6 +65,19 @@ SimulationDecPOMDPDiscrete::~SimulationDecPOMDPDiscrete()
 {
 }
 
+/* from http://www.mega-nerd.com/FPcast/ */
+	__inline long int 
+	lrint (double flt) 
+	{	int intgr;
+
+		_asm
+		{	fld flt
+			fistp intgr
+			} ;
+			
+		return intgr ;
+	} 
+
 void SimulationDecPOMDPDiscrete::Initialize()
 {
     if(_m_pu->GetHorizon()==MAXHORIZON)
