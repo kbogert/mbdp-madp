@@ -188,7 +188,7 @@ modelOptions_parse_argument (int key, char *arg, struct argp_state *state)
             theArgumentsStruc->isTOI=1;
             break;
         case 'g':
-            theArgumentsStruc->discount = strtof(arg,0);
+            theArgumentsStruc->discount = strtod(arg,0);
             break;
         default:
             return ARGP_ERR_UNKNOWN;
@@ -240,6 +240,66 @@ solutionMethodOptions_parse_argument (int key, char *arg, struct argp_state *sta
 }
 static struct argp solutionMethodOptions_argp = { solutionMethodOptions_options, solutionMethodOptions_parse_argument, solutionMethodOptions_args_doc, solutionMethodOptions_doc };
 const struct argp_child solutionMethodOptions_child = {&solutionMethodOptions_argp, 0, "Solution method options", GID_SM };
+
+
+/* stolen from dietlibc - http://www.fefe.de/dietlibc/ , thanks for nothing microsoft. what year is it now? How long ago was C99? stupid fucks */
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long int strtoull(const char *ptr, char **endptr, int base)
+{
+  int neg = 0, overflow = 0;
+  long long int v=0;
+  const char* orig;
+  const char* nptr=ptr;
+
+  while(isspace(*nptr)) ++nptr;
+
+  if (*nptr == '-') { neg=1; nptr++; }
+  else if (*nptr == '+') ++nptr;
+  orig=nptr;
+  if (base==16 && nptr[0]=='0') goto skip0x;
+  if (base) {
+    register unsigned int b=base-2;
+    if (b>34) { errno=EINVAL; return 0; }
+  } else {
+    if (*nptr=='0') {
+      base=8;
+skip0x:
+      if (((*(nptr+1)=='x')||(*(nptr+1)=='X')) && isxdigit(nptr[2])) {
+	nptr+=2;
+	base=16;
+      }
+    } else
+      base=10;
+  }
+  while(*nptr) {
+    register unsigned char c=*nptr;
+    c=(c>='a'?c-'a'+10:c>='A'?c-'A'+10:c<='9'?c-'0':0xff);
+    if (c>=base) break;	/* out of base */
+    {
+      register unsigned long x=(v&0xff)*base+c;
+      register unsigned long long w=(v>>8)*base+(x>>8);
+      if (w>(ULLONG_MAX>>8)) overflow=1;
+      v=(w<<8)+(x&0xff);
+    }
+    ++nptr;
+  }
+  if (nptr==orig) {		/* no conversion done */
+    nptr=ptr;
+    errno=EINVAL;
+    v=0;
+  }
+  if (endptr) *endptr=(char *)nptr;
+  if (overflow) {
+    errno=ERANGE;
+    return ULLONG_MAX;
+  }
+  return (neg?-v:v);
+}
 
 
 //joint policy argument parser (jpolIndex)
@@ -487,7 +547,7 @@ perseusbelief_parse_argument (int key, char *arg, struct argp_state *state)
         theArgumentsStruc->useQMDPforSamplingBeliefs=1;
         break;
     case 'x':
-        theArgumentsStruc->QMDPexploreProb = strtof(arg,0);
+        theArgumentsStruc->QMDPexploreProb = strtod(arg,0);
         break;
     default:
         return ARGP_ERR_UNKNOWN;
@@ -565,10 +625,10 @@ perseusbackup_parse_argument (int key, char *arg, struct argp_state *state)
             return ARGP_ERR_UNKNOWN;
         break;
     case 'w':
-        theArgumentsStruc->waitPenalty = strtof(arg,0);
+        theArgumentsStruc->waitPenalty = strtod(arg,0);
         break;
     case 'W':
-        theArgumentsStruc->weight = strtof(arg,0);
+        theArgumentsStruc->weight = strtod(arg,0);
         break;
     case 'c':
         theArgumentsStruc->commModel = atoi(arg);
