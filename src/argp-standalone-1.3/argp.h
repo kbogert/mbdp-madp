@@ -40,6 +40,16 @@ typedef int error_t;
 # define __error_t_defined
 #endif
 
+#if __GNUC__ && !defined(printf)
+#define NORETURN __attribute__ ((noreturn))
+#define PRINTF_STYLE(f, a) __attribute__ ((format(printf, f, a)))
+#define UNUSED __attribute__ ((unused))
+#else
+#define NORETURN
+#define PRINTF_STYLE(f, a)
+#define UNUSED
+#endif
+
 /* FIXME: What's the right way to check for __restrict? Sun's cc seems
    not to have it. Perhaps it's easiest to just delete the use of
    __restrict from the prototypes. */

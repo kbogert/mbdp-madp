@@ -31,6 +31,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <error.h>
+#pragma comment(lib,"libArgp.lib")
 #include <argp.h>
 #include <vector>
 #include "Globals.h"

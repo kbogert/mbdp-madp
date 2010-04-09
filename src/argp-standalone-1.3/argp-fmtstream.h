@@ -29,6 +29,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#if __GNUC__ && !defined(printf)
+#define NORETURN __attribute__ ((noreturn))
+#define PRINTF_STYLE(f, a) __attribute__ ((format(printf, f, a)))
+#define UNUSED __attribute__ ((unused))
+#else
+#define NORETURN
+#define PRINTF_STYLE(f, a)
+#define UNUSED
+#endif
+
 #if HAVE_UNISTD_H
 # include <unistd.h>
 #else
