@@ -107,7 +107,7 @@ private:
                                 //find the best action at ssucI
                                 maxQsuc = -DBL_MAX;
                                 for(Index jasucI = 0; jasucI < nrJA; jasucI++)
-                                    maxQsuc = std::max( _m_QValues[t+1](ssucI,jasucI),
+                                    maxQsuc = max( _m_QValues[t+1](ssucI,jasucI),
                                                    maxQsuc);
                             
                                 R_f += *ci * maxQsuc;
@@ -151,14 +151,14 @@ private:
                             //find the best action at ssucI
                             maxQsuc = -DBL_MAX;
                             for(Index jasucI = 0; jasucI < nrJA; jasucI++)
-                                maxQsuc = std::max( oldQtable(ssucI,jasucI),
+                                maxQsuc = max( oldQtable(ssucI,jasucI),
                                                maxQsuc);
                             
                             R_f += *ci * maxQsuc;
                         }//done calc. expected future reward
                         
                         _m_QValues[0](sI,jaI) = R_i + gamma*R_f;
-                        maxDelta=std::max(maxDelta,
+                        maxDelta=max(maxDelta,
                                           std::abs(oldQtable(sI,jaI)-
                                                    _m_QValues[0](sI,jaI)));
                     }//end for jaI
