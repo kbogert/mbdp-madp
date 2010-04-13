@@ -242,7 +242,7 @@ static struct argp solutionMethodOptions_argp = { solutionMethodOptions_options,
 const struct argp_child solutionMethodOptions_child = {&solutionMethodOptions_argp, 0, "Solution method options", GID_SM };
 
 
-/* stolen from dietlibc - http://www.fefe.de/dietlibc/ , thanks for nothing microsoft. what year is it now? How long ago was C99? stupid fucks */
+/* stolen from dietlibc - http://www.fefe.de/dietlibc/ */
 
 #include <ctype.h>
 #include <stdlib.h>
