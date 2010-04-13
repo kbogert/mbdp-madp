@@ -27,6 +27,8 @@
 
 #include "TimeTools.h"
 
+#include <sys/types.h>
+
 namespace TimeTools{
 
 double GetDeltaTimeDouble(timeval start_time, timeval cur_time)

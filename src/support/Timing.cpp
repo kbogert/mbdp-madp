@@ -223,7 +223,7 @@ clock_t Timing::GetCpuTime() const
 
 double Timing::ClockToSeconds(clock_t clockTicks) const
 {
-    return(static_cast<double>(clockTicks) / sysconf(_SC_CLK_TCK));
+    return(static_cast<double>(clockTicks) / CLOCKS_PER_SEC);
 }
 
 void Timing::AddEvent(const string & id, clock_t duration)
