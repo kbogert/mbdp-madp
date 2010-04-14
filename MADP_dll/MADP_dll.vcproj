@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\src\argp-standalone-1.3&quot;;..\src;..\src\include;..\src\base;..\src\parser;..\src\planning;..\src\support;D:\boost_1_42_0"
+				AdditionalIncludeDirectories="&quot;..\src\argp-standalone-1.3&quot;;..\src;..\src\include;..\src\base;..\src\parser;..\src\planning;..\src\support;..\src\boost"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MADP_DLL_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
