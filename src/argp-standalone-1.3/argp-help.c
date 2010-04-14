@@ -1340,7 +1340,7 @@ hol_usage (struct hol *hol, argp_fmtstream_t stream)
     {
       unsigned nentries;
       struct hol_entry *entry;
-      char *short_no_arg_opts = alloca (strlen (hol->short_options) + 1);
+      char *short_no_arg_opts = _alloca (strlen (hol->short_options) + 1);
       char *snao_end = short_no_arg_opts;
 
       /* First we put a list of short options without arguments.  */
@@ -1609,7 +1609,7 @@ _help (const struct argp *argp, const struct argp_state *state, FILE *stream,
     {
       int first_pattern = 1, more_patterns;
       size_t num_pattern_levels = argp_args_levels (argp);
-      char *pattern_levels = alloca (num_pattern_levels);
+      char *pattern_levels = _alloca (num_pattern_levels);
 
       memset (pattern_levels, 0, num_pattern_levels);
 

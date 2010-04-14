@@ -247,7 +247,7 @@ main (int argc, char **argv)
 {
   struct params params;
   params.foonly = 0;
-  params.foonly_default = random ();
+  params.foonly_default = rand ();
   argp_parse (&argp, argc, argv, 0, 0, &params);
   printf ("After parsing: foonly = %x\n", params.foonly);
   return 0;

@@ -1229,8 +1229,8 @@ __argp_parse (const struct argp *argp, int argc, char **argv, unsigned flags,
   if (! (flags & ARGP_NO_HELP))
     /* Add our own options.  */
     {
-      struct argp_child *child = alloca (4 * sizeof (struct argp_child));
-      struct argp *top_argp = alloca (sizeof (struct argp));
+      struct argp_child *child = _alloca (4 * sizeof (struct argp_child));
+      struct argp *top_argp = _alloca (sizeof (struct argp));
 
       /* TOP_ARGP has no options, it just serves to group the user & default
 	 argps.  */
