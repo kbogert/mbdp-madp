@@ -33,6 +33,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JESP", "..\Tests\JESP\JESP.
 		{B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F} = {B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Perseus", "..\Tests\Perseus\Perseus.vcproj", "{DC87AA95-0A85-4E60-88F5-276EC7A9B0C8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F} = {B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -67,6 +72,10 @@ Global
 		{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}.Debug|Win32.Build.0 = Debug|Win32
 		{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}.Release|Win32.ActiveCfg = Release|Win32
 		{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}.Release|Win32.Build.0 = Release|Win32
+		{DC87AA95-0A85-4E60-88F5-276EC7A9B0C8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DC87AA95-0A85-4E60-88F5-276EC7A9B0C8}.Debug|Win32.Build.0 = Debug|Win32
+		{DC87AA95-0A85-4E60-88F5-276EC7A9B0C8}.Release|Win32.ActiveCfg = Release|Win32
+		{DC87AA95-0A85-4E60-88F5-276EC7A9B0C8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
