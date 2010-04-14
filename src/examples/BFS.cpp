@@ -39,6 +39,7 @@
 using namespace std;
 using namespace ArgumentUtils;
 
+#pragma comment(lib,"MADP_dll.lib") 
 
 const char *argp_program_version = "BFS";
 
