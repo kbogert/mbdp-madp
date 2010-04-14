@@ -26,10 +26,12 @@
  */
 
 #include "directories.h"
-#include <wordexp.h>
+#include "windows.h"
+#include <direct.h>
+//#include <wordexp.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include "PlanningUnit.h"
 #include "MultiAgentDecisionProcessInterface.h"
 #include "argumentHandlers.h"
@@ -38,11 +40,10 @@ using namespace std;
 
 string directories::MADPGetResultsDir()
 {
-    wordexp_t p;
-    wordexp("~/.madp/results",&p,0);
-    string dir(p.we_wordv[0]);
-    wordfree(&p);
-    return(dir);
+	char * strPath = "%USERPROFILE%/.madp/results";
+	char cOutputPath[32000];
+	ExpandEnvironmentStrings((LPCTSTR)strPath, (LPWSTR)cOutputPath, 8000);
+    return string(cOutputPath);
 }
 
 string directories::MADPGetResultsDir(const string & method,
@@ -87,14 +88,14 @@ void directories::MADPCreateResultsDir(const string & method,
     
     struct stat statInfo;
     if(stat(dir.c_str(),&statInfo)==0 &&
-       S_ISDIR(statInfo.st_mode))
+       (((statInfo.st_mode) & S_IFMT) == S_IFDIR))
     {
 #if 0
         cout << "Results dir " << dir << " already exists" << endl;
 #endif
     }
     else
-        if(mkdir(dir.c_str(),0777)!=0)
+        if(_mkdir(dir.c_str())!=0)
             perror("mkdir error");
 }
 
@@ -181,11 +182,10 @@ directories::MADPGetResultsFilename(const string & method,
 
 string directories::MADPGetProblemsDir()
 {
-    wordexp_t p;
-    wordexp("~/.madp/problems",&p,0);
-    string dir(p.we_wordv[0]);
-    wordfree(&p);
-    return(dir);
+	char * strPath = "%USERPROFILE%/.madp/problems";
+	char cOutputPath[32000];
+	int size = ExpandEnvironmentStrings((LPCTSTR)strPath, (LPWSTR)cOutputPath, 8000);
+    return string(cOutputPath);
 }
 
 string directories::MADPGetProblemFilename(const string & problem, const string & extension)
