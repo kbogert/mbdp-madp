@@ -29,6 +29,8 @@
 #include "ProblemDecTiger.h"
 #include "JESPDynamicProgrammingPlanner.h"
 
+#pragma comment(lib,"MADP_dll.lib") 
+
 using namespace std;
 
 int main()
