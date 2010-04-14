@@ -28,6 +28,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GMAA", "..\Tests\GMAA\GMAA.
 		{B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F} = {B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JESP", "..\Tests\JESP\JESP.vcproj", "{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F} = {B0A4FFA7-64B4-48EC-A0FD-C60C1106AE3F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -58,6 +63,10 @@ Global
 		{B98FB59F-42B5-46C4-864A-24A3A6F405EC}.Debug|Win32.Build.0 = Debug|Win32
 		{B98FB59F-42B5-46C4-864A-24A3A6F405EC}.Release|Win32.ActiveCfg = Release|Win32
 		{B98FB59F-42B5-46C4-864A-24A3A6F405EC}.Release|Win32.Build.0 = Release|Win32
+		{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}.Debug|Win32.Build.0 = Debug|Win32
+		{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}.Release|Win32.ActiveCfg = Release|Win32
+		{E713F1A6-ACB9-4B35-BF8D-A26BD9A0E3C7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
