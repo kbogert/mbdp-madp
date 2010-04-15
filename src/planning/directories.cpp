@@ -41,8 +41,8 @@ using namespace std;
 string directories::MADPGetResultsDir()
 {
 	char * strPath = "%USERPROFILE%/.madp/results";
-	char cOutputPath[32000];
-	ExpandEnvironmentStrings((LPCTSTR)strPath, (LPWSTR)cOutputPath, 8000);
+	char cOutputPath[MAX_PATH];
+	ExpandEnvironmentStringsA(strPath, cOutputPath, MAX_PATH);
     return string(cOutputPath);
 }
 
@@ -183,8 +183,8 @@ directories::MADPGetResultsFilename(const string & method,
 string directories::MADPGetProblemsDir()
 {
 	char * strPath = "%USERPROFILE%/.madp/problems";
-	char cOutputPath[32000];
-	int size = ExpandEnvironmentStrings((LPCTSTR)strPath, (LPWSTR)cOutputPath, 8000);
+	char cOutputPath[MAX_PATH];
+	int size = ExpandEnvironmentStringsA(strPath, cOutputPath, MAX_PATH);
     return string(cOutputPath);
 }
 
