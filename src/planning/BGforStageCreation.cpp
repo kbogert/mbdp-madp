@@ -129,12 +129,11 @@ void BGforStageCreation::Fill_joI_Array(
     for(Index agentI=0; agentI < pu->GetNrAgents(); agentI++)
     {
         indOHI[agentI] += firstOHtsI[agentI];
-        Index * obsArr = new Index[ts];
+        Index * obsArr = (Index *)_alloca(ts * sizeof(Index));
         pu->GetObservationHistoryArrays(agentI, indOHI[agentI], ts, obsArr);
         //now obsArr is filled and can be copied into indivObservations
         for(Index tI=0; tI < ts; tI++)
             indivObservations.at(tI).at(agentI) = obsArr[tI];
-		delete obsArr;
     }
 
     for(Index tI=0; tI < ts; tI++)
