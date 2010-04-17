@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory="$(TargetDir)"
-				CommandArguments=""
+				CommandArguments="--JESP-type=Exh -h 3 ..\..\problems\dectiger.dpomdp"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
@@ -39,7 +39,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory="$(TargetDir)"
-				CommandArguments=""
+				CommandArguments="--JESP-type=Exh -h 3 ..\..\problems\dectiger.dpomdp"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
