@@ -26,15 +26,21 @@
  */
 
 // Very short example program to demonstrate how to solve the DecTiger problem
+
 #include "ProblemDecTiger.h"
 #include "JESPDynamicProgrammingPlanner.h"
 
-#pragma comment(lib,"MADP_dll.lib") 
-
 using namespace std;
 
+//#pragma comment(lib,"MADP_dll.lib") 
+#pragma comment(lib,"libMADPplanning.lib")
+
+#include <time.h>
 int main()
 {
+	time_t t = time(0);
+	cout << "Seed: " << t << endl;
+	srand(86);
     // construct problem
     ProblemDecTiger dectiger;
     // initialize planner for horizon 3

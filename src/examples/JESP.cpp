@@ -44,7 +44,8 @@
 using namespace std;
 using namespace ArgumentUtils;
 
-#pragma comment(lib,"MADP_dll.lib") 
+#pragma comment(lib,"libMADPplanning.lib")  
+#pragma comment(lib,"libMADPSupport.lib") 
 
 const char *argp_program_version = "JESP";
 
