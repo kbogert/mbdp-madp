@@ -35,12 +35,9 @@ using namespace std;
 //#pragma comment(lib,"MADP_dll.lib") 
 #pragma comment(lib,"libMADPplanning.lib")
 
-#include <time.h>
 int main()
 {
-	time_t t = time(0);
-	cout << "Seed: " << t << endl;
-	srand(86);
+	srand(1271389634);
     // construct problem
     ProblemDecTiger dectiger;
     // initialize planner for horizon 3
