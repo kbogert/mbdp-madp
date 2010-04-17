@@ -51,7 +51,7 @@ using namespace BGIP_SolverType;
 using namespace std;
 using namespace ArgumentUtils;
 
-#pragma comment(lib,"MADP_dll.lib") 
+#pragma comment(lib,"libMADPplanning.lib") 
 
 QFunctionJAOH* getQheuristic(GeneralizedMAAStarPlannerForDecPOMDPDiscrete *gmaa,
                              Qheur_t Qheur)
