@@ -39,7 +39,7 @@
 			<DebugSettings
 				Command="$(TargetPath)"
 				WorkingDirectory="$(TargetDir)"
-				CommandArguments=""
+				CommandArguments="DT"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
