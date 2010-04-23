@@ -19,8 +19,14 @@ public:
   virtual void onUnitShow(BWAPI::Unit* unit);
   virtual void onUnitHide(BWAPI::Unit* unit);
   virtual void onUnitRenegade(BWAPI::Unit* unit);
+
+protected:
+
   void drawStats(); //not part of BWAPI::AIModule
   void showPlayers();
   void showForces();
+  
   bool show_visibility_data;
+
+  BWAPI::Unit * curTarget;
 };

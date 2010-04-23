@@ -1,5 +1,8 @@
 #include "MBDPAIModule.h"
+
 using namespace BWAPI;
+using namespace std;
+
 void ExampleAIModule::onStart()
 {
   Broodwar->sendText("Hello world!");
@@ -10,6 +13,7 @@ void ExampleAIModule::onStart()
   //Broodwar->enableFlag(Flag::CompleteMapInformation);
 
   show_visibility_data=false;
+  curTarget = NULL;
 
   if (Broodwar->isReplay())
   {
@@ -95,6 +99,28 @@ void ExampleAIModule::onFrame()
 
   drawStats();
 
+
+  if (curTarget == NULL) {
+
+	  // pick a visible enemy
+	  for (std::set<Player *>::const_iterator iter = Broodwar->getPlayers().begin(); iter != Broodwar->getPlayers().end(); iter++) {
+		  if ((*iter)->getID() != Broodwar->self()->getID()) {
+			  // just pick the first one stupidly
+			  if((*iter)->getUnits().size() > 0)
+				  curTarget = (*(*iter)->getUnits().begin());
+			  if (curTarget != NULL)
+				break;
+		  }
+	  }
+
+	  if (curTarget != NULL) {
+			// find all my units, set to attack!
+			for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++)
+			{
+				(*i)->attackUnit(curTarget);
+			}
+	  }
+  }
 }
 
 void ExampleAIModule::onUnitCreate(BWAPI::Unit* unit)
@@ -118,6 +144,10 @@ void ExampleAIModule::onUnitDestroy(BWAPI::Unit* unit)
 {
   if (!Broodwar->isReplay())
     Broodwar->sendText("A %s [%x] has been destroyed at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
+
+  if (unit == curTarget) {
+		curTarget = NULL;
+  }
 }
 
 void ExampleAIModule::onUnitMorph(BWAPI::Unit* unit)
