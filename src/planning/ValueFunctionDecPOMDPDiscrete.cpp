@@ -142,7 +142,7 @@ double ValueFunctionDecPOMDPDiscrete::CalculateV0RecursivelyCached()
         if(DEBUG_CALCV){
             cout << ">>>ValueFunctionDecPOMDPDiscrete::CalculateV() -"
                  << " CalculateVsjohRecursively(sI=" << sI
-                 << ", INITIAL_JOHI, cache="<< cache<< ") = " << v_sI << endl; }
+                 << ", INITIAL_JOHI, cache=true) = " << v_sI << endl; }
 #endif                 
         val +=  _m_pu->GetInitialStateProbability(sI) * v_sI;
     }
@@ -169,7 +169,7 @@ double ValueFunctionDecPOMDPDiscrete::CalculateV0RecursivelyNotCached()
         if(DEBUG_CALCV){
             cout << ">>>ValueFunctionDecPOMDPDiscrete::CalculateV() -"
                  << " CalculateVsjohRecursively(sI=" << sI
-                 << ", INITIAL_JOHI, cache="<< cache<< ") = " << v_sI << endl; }
+                 << ", INITIAL_JOHI, cache=false) = " << v_sI << endl; }
 #endif                 
         val +=  _m_pu->GetInitialStateProbability(sI) * v_sI;
     }
@@ -178,8 +178,6 @@ double ValueFunctionDecPOMDPDiscrete::CalculateV0RecursivelyNotCached()
 #endif                 
     return val;
 }
-
-
 
 
 double ValueFunctionDecPOMDPDiscrete::CalculateVsjohRecursivelyCached(Index sI, 
