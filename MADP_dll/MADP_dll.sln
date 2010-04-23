@@ -56,6 +56,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMADPplanning", "..\libMA
 		{8CBD67F9-ACFC-41EB-B1D4-956335C803F5} = {8CBD67F9-ACFC-41EB-B1D4-956335C803F5}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MBDPAIBot", "..\MBDPAIBot\MBDPAIBot.vcproj", "{539710F3-427B-4885-B820-4431CB4FAE56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -109,6 +111,10 @@ Global
 		{66D7C399-561A-48C6-8107-BC3C30C06335}.Debug|Win32.Build.0 = Debug|Win32
 		{66D7C399-561A-48C6-8107-BC3C30C06335}.Release|Win32.ActiveCfg = Release|Win32
 		{66D7C399-561A-48C6-8107-BC3C30C06335}.Release|Win32.Build.0 = Release|Win32
+		{539710F3-427B-4885-B820-4431CB4FAE56}.Debug|Win32.ActiveCfg = Debug|Win32
+		{539710F3-427B-4885-B820-4431CB4FAE56}.Debug|Win32.Build.0 = Debug|Win32
+		{539710F3-427B-4885-B820-4431CB4FAE56}.Release|Win32.ActiveCfg = Release|Win32
+		{539710F3-427B-4885-B820-4431CB4FAE56}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
