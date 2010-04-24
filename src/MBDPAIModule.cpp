@@ -104,7 +104,7 @@ void MBDPAIModule::onFrame()
   static long long counter = 0;
   counter ++;
 
-  if (counter % 30 != 1) return;
+  if (counter % 60 != 1) return;
 
   // perform observations, update state variables
 
@@ -116,18 +116,30 @@ void MBDPAIModule::onFrame()
 
 
 
-	for (int i = 0; i < jp->GetNrAgents(); i ++) {
+/*	for (int i = 0; i < jp->GetNrAgents(); i ++) {
 		for (int j = 0; j < jp->GetNrDomainElements(i); j++) {
 //			Broodwar->printf("ActionIndex for %d : %d", i, jp->GetActionIndex(i,j));
 
 		}
 
 	}
-		Broodwar->printf("Joint Action: %s", planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief().c_str());
+	*/
+//		Broodwar->printf("Joint Action: %s", planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief().c_str());
 
 
   // enact policy
 
+		std::string policy = planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief();
+
+		for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
+			if (policy == "wait_send"){
+				// gonna map this to a flee
+				flee(*i);
+			} else {
+				// gonna map this to a attack
+				attackClosest(*i);
+			}
+		}
 }
 
 void MBDPAIModule::onUnitCreate(BWAPI::Unit* unit)
@@ -224,12 +236,62 @@ void MBDPAIModule::showForces()
     }
   }
 }
+BWAPI::Unit * MBDPAIModule::getClosestEnemy(BWAPI::Unit * unit) {
 
+	// find the closest unit to me
+	double closestDistance = 1000000000;
+	BWAPI::Unit * closestUnit = NULL;
+
+    // pick a visible enemy
+	  for (std::set<Player *>::const_iterator iter = Broodwar->getPlayers().begin(); iter != Broodwar->getPlayers().end(); iter++) {
+		  if ((*iter)->isEnemy(Broodwar->self())) {
+			  for (std::set<Unit *>::const_iterator unititer = (*iter)->getUnits().begin(); unititer != (*iter)->getUnits().end(); unititer ++) {
+				  double distance = unit->getPosition().getDistance((*unititer)->getPosition());
+				  if (distance < closestDistance) {
+					 closestDistance = distance;
+					 closestUnit = *unititer;
+				  }
+			  }
+		  }
+	  }
+	return closestUnit;
+}
 
 void MBDPAIModule::attackClosest(BWAPI::Unit * attacker) {
 
+	Unit * closestUnit = getClosestEnemy(attacker);
+	  if (closestUnit != NULL) {
+		  attacker->attackUnit(closestUnit);
+		  Broodwar->printf("Attack! at: %d, %d", closestUnit->getPosition().x(), closestUnit->getPosition().y());
+
+	  }
 }
 
 void MBDPAIModule::flee(BWAPI::Unit * unit) {
 
+	// pick a point in the opposite direction from the closest enemy
+	Unit * closestEnemy = getClosestEnemy(unit);
+	if (closestEnemy != NULL) {
+		int x = -1;
+		int y = -1;
+		int mult = 20;
+		int d_x = 1000;
+		int d_y = 1000;
+
+		while ((abs(d_x) > 200 || abs(d_y) > 200) && mult > 0) {
+			d_x = (unit->getPosition().x() - closestEnemy->getPosition().x()) * mult;
+			d_y = (unit->getPosition().y() - closestEnemy->getPosition().y()) * mult;
+			x = d_x + unit->getPosition().x();
+			y = d_y + unit->getPosition().y();
+			mult --;
+		}
+
+		Position pos(x, y);
+		unit->rightClick(pos);
+
+		Broodwar->printf("RUN AWAY! to: %d, %d (Mult %d)", pos.x(), pos.y(), mult);
+
+
+
+	}
 }

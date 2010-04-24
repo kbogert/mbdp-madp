@@ -27,6 +27,8 @@ protected:
 	void attackClosest(BWAPI::Unit * attacker);
 	void flee(BWAPI::Unit * unit);
 
+	BWAPI::Unit * getClosestEnemy(BWAPI::Unit * unit);
+
   void drawStats();
   void showPlayers();
   void showForces();
