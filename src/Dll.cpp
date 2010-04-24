@@ -33,6 +33,8 @@ BOOL APIENTRY DllMain( HANDLE hModule,
   return new MBDPAIModule();
 }
 
+#ifdef _DEBUG
+
  int main() {
 	BWAPI::Broodwar=NULL;
 
@@ -40,3 +42,4 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 	mod->onStart();
 	return 0;
  }
+#endif

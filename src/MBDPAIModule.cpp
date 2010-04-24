@@ -15,7 +15,8 @@ using namespace ArgumentHandlers;
 
 void MBDPAIModule::onStart()
 {
-/*  // Enable some cheat flags
+#ifndef _DEBUG  
+  // Enable some cheat flags
   Broodwar->enableFlag(Flag::UserInput);
   // Uncomment to enable complete map information
   //Broodwar->enableFlag(Flag::CompleteMapInformation);
@@ -39,7 +40,8 @@ void MBDPAIModule::onStart()
       Broodwar->self()->getRace().getName().c_str(),
       Broodwar->enemy()->getRace().getName().c_str());
 
-*/	// Initialize planner
+#endif
+	// Initialize planner
 
 	ArgumentHandlers::Arguments args;
 //	args.infiniteHorizon = 1;
@@ -61,8 +63,10 @@ void MBDPAIModule::onStart()
 
     planner = new JESPDynamicProgrammingPlanner (params,args.horizon,&decpomdp);
 
-//	Broodwar->printf("JESP planner initialized"); 
-//  }
+#ifndef _DEBUG
+	Broodwar->printf("JESP planner initialized"); 
+  }
+#endif
 }
 void MBDPAIModule::onEnd(bool isWinner)
 {
