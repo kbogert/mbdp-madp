@@ -32,3 +32,11 @@ BOOL APIENTRY DllMain( HANDLE hModule,
   BWAPI::Broodwar=game;
   return new MBDPAIModule();
 }
+
+ int main() {
+	BWAPI::Broodwar=NULL;
+
+	BWAPI::AIModule * mod = new MBDPAIModule();
+	mod->onStart();
+	return 0;
+ }

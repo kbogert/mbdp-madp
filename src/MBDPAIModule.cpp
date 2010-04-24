@@ -15,7 +15,7 @@ using namespace ArgumentHandlers;
 
 void MBDPAIModule::onStart()
 {
-  // Enable some cheat flags
+/*  // Enable some cheat flags
   Broodwar->enableFlag(Flag::UserInput);
   // Uncomment to enable complete map information
   //Broodwar->enableFlag(Flag::CompleteMapInformation);
@@ -39,13 +39,13 @@ void MBDPAIModule::onStart()
       Broodwar->self()->getRace().getName().c_str(),
       Broodwar->enemy()->getRace().getName().c_str());
 
-	// Initialize planner
+*/	// Initialize planner
 
 	ArgumentHandlers::Arguments args;
 //	args.infiniteHorizon = 1;
 	args.horizon = 3;
-//	args.dpf = std::string("D:\\CSCI-6900\\problems\\dectiger.dpomdp").c_str();
-	args.problem_type = ProblemType::DT;
+	args.dpf = "D:/CSCI-6900/problems/broadcastChannel.dpomdp";
+//	args.problem_type = ProblemType::DT;
 	DecPOMDPDiscreteInterface & decpomdp = * ArgumentUtils::GetDecPOMDPDiscreteInterfaceFromArgs(args);
     
     //Initialization of the planner with typical options for JESP:
@@ -61,8 +61,8 @@ void MBDPAIModule::onStart()
 
     planner = new JESPDynamicProgrammingPlanner (params,args.horizon,&decpomdp);
 
-	Broodwar->printf("JESP planner initialized"); 
-  }
+//	Broodwar->printf("JESP planner initialized"); 
+//  }
 }
 void MBDPAIModule::onEnd(bool isWinner)
 {
@@ -97,6 +97,11 @@ void MBDPAIModule::onFrame()
 
   drawStats();
 
+  static long long counter = 0;
+  counter ++;
+
+  if (counter % 30 != 1) return;
+
   // perform observations, update state variables
 
   // update planner, run plan()
@@ -107,15 +112,15 @@ void MBDPAIModule::onFrame()
 
 
 
-//	for (int i = 0; i < jp->GetNrAgents(); i ++) {
-//		for (int j = 0; j < jp->GetNrDomainElements(i); j++) {
+	for (int i = 0; i < jp->GetNrAgents(); i ++) {
+		for (int j = 0; j < jp->GetNrDomainElements(i); j++) {
 //			Broodwar->printf("ActionIndex for %d : %d", i, jp->GetActionIndex(i,j));
 
-//		}
+		}
 
-//	}
+	}
+		Broodwar->printf("Joint Action: %s", planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief().c_str());
 
-	Broodwar->printf("Policy: %s", jp->SoftPrintBrief().c_str());
 
   // enact policy
 
