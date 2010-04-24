@@ -1,0 +1,557 @@
+# starcraft.dpomdp 
+# ----------- 
+# Christopher Jackson - moxie@uga.edu 
+# Kenneth Bogert - kbogert@uga.edu 
+# 2010-04-23 
+# 
+# This is a Dec-POMDP model for our StarCraft (TM) Problem. 
+# First we note a few important things: 
+# 
+# 1) the file format is case-sensitive 
+# 2) the first entries in this file are: 
+# agents 
+# discount 
+# values 
+# states 
+# start 
+# actions 
+# observations 
+# 
+#
+agents: Unit1 Unit2
+discount: 0.9
+values: reward
+# 
+# 
+# States 
+# <agent1 isBeingAttacked {0,1}><agent2 isBeingAttacked {0,1}><enemy1 isBeingAttacked {0,1}>
+# Example, s101 means agent1 is being attacked, agent2 is *not* being attacked and enemy1 is being attacked 
+states: s000 s001 s010 s011 s100 s101 s110 s111
+start: s000
+# 
+#
+# Actions 
+# Each agent has Attack (A) or Escape (E) (4 possible joint actions)
+actions:
+A E
+A E
+#
+# 
+# Observations 
+# Each agent has See the enemy (S) or Don't see the enemy (D) (4 possible joint observations) 
+observations:  
+S D
+S D
+#
+#
+# Transition probabilities 
+# Pr(s'|ja, s) - a |S|x|S| matrix
+# T: <a1 a2...an> : <start-state> : <end-state> : %f
+T: * :
+uniform
+# 
+# It is very unlikely (only 10% of the time) that with joint action <A A> 
+# the enemy is not being attacked in any successor state. 
+# Note: 4 successor states have the enemy not being attacked.
+#       So these 4 states added together make the 10% (i.e. 2.5% * 4)
+T: A A : s000 : s000 : 0.025
+T: A A : s000 : s001 : 0.225
+T: A A : s000 : s010 : 0.025 
+T: A A : s000 : s011 : 0.225
+T: A A : s000 : s100 : 0.025
+T: A A : s000 : s101 : 0.225
+T: A A : s000 : s110 : 0.025
+T: A A : s000 : s111 : 0.225
+T: A A : s001 : s000 : 0.025 
+T: A A : s001 : s001 : 0.225
+T: A A : s001 : s010 : 0.025 
+T: A A : s001 : s011 : 0.225
+T: A A : s001 : s100 : 0.025
+T: A A : s001 : s101 : 0.225
+T: A A : s001 : s110 : 0.025
+T: A A : s001 : s111 : 0.225 
+T: A A : s010 : s000 : 0.025 
+T: A A : s010 : s001 : 0.225
+T: A A : s010 : s010 : 0.025 
+T: A A : s010 : s011 : 0.225
+T: A A : s010 : s100 : 0.025
+T: A A : s010 : s101 : 0.225
+T: A A : s010 : s110 : 0.025
+T: A A : s010 : s111 : 0.225 
+T: A A : s011 : s000 : 0.025 
+T: A A : s011 : s001 : 0.225
+T: A A : s011 : s010 : 0.025 
+T: A A : s011 : s011 : 0.225
+T: A A : s011 : s100 : 0.025
+T: A A : s011 : s101 : 0.225
+T: A A : s011 : s110 : 0.025
+T: A A : s011 : s111 : 0.225 
+T: A A : s100 : s000 : 0.025 
+T: A A : s100 : s001 : 0.225
+T: A A : s100 : s010 : 0.025 
+T: A A : s100 : s011 : 0.225
+T: A A : s100 : s100 : 0.025
+T: A A : s100 : s101 : 0.225
+T: A A : s100 : s110 : 0.025
+T: A A : s100 : s111 : 0.225 
+T: A A : s101 : s000 : 0.025 
+T: A A : s101 : s001 : 0.225
+T: A A : s101 : s010 : 0.025 
+T: A A : s101 : s011 : 0.225
+T: A A : s101 : s100 : 0.025
+T: A A : s101 : s101 : 0.225
+T: A A : s101 : s110 : 0.025
+T: A A : s101 : s111 : 0.225 
+T: A A : s110 : s000 : 0.025 
+T: A A : s110 : s001 : 0.225
+T: A A : s110 : s010 : 0.025 
+T: A A : s110 : s011 : 0.225
+T: A A : s110 : s100 : 0.025
+T: A A : s110 : s101 : 0.225
+T: A A : s110 : s110 : 0.025
+T: A A : s110 : s111 : 0.225 
+T: A A : s111 : s000 : 0.025 
+T: A A : s111 : s001 : 0.225
+T: A A : s111 : s010 : 0.025 
+T: A A : s111 : s011 : 0.225
+T: A A : s111 : s100 : 0.025
+T: A A : s111 : s101 : 0.225
+T: A A : s111 : s110 : 0.025
+T: A A : s111 : s111 : 0.225 
+# It is very unlikely (only 10% of the time) that with joint action <E E> 
+# the enemy is not being attacked in any successor state 
+# Note: 4 successor states have the enemy not being attacked.
+#       So these 4 states added together make the 10% (i.e. 2.5% * 4)
+T: E E : s000 : s000 : 0.025 
+T: E E : s000 : s001 : 0.225
+T: E E : s000 : s010 : 0.025 
+T: E E : s000 : s011 : 0.225
+T: E E : s000 : s100 : 0.025
+T: E E : s000 : s101 : 0.225
+T: E E : s000 : s110 : 0.025
+T: E E : s000 : s111 : 0.225
+T: E E : s001 : s000 : 0.025 
+T: E E : s001 : s001 : 0.225
+T: E E : s001 : s010 : 0.025 
+T: E E : s001 : s011 : 0.225
+T: E E : s001 : s100 : 0.025
+T: E E : s001 : s101 : 0.225
+T: E E : s001 : s110 : 0.025
+T: E E : s001 : s111 : 0.225 
+T: E E : s010 : s000 : 0.025 
+T: E E : s010 : s001 : 0.225
+T: E E : s010 : s010 : 0.025 
+T: E E : s010 : s011 : 0.225
+T: E E : s010 : s100 : 0.025
+T: E E : s010 : s101 : 0.225
+T: E E : s010 : s110 : 0.025
+T: E E : s010 : s111 : 0.225 
+T: E E : s011 : s000 : 0.025 
+T: E E : s011 : s001 : 0.225
+T: E E : s011 : s010 : 0.025 
+T: E E : s011 : s011 : 0.225
+T: E E : s011 : s100 : 0.025
+T: E E : s011 : s101 : 0.225
+T: E E : s011 : s110 : 0.025
+T: E E : s011 : s111 : 0.225 
+T: E E : s100 : s000 : 0.025 
+T: E E : s100 : s001 : 0.225
+T: E E : s100 : s010 : 0.025 
+T: E E : s100 : s011 : 0.225
+T: E E : s100 : s100 : 0.025
+T: E E : s100 : s101 : 0.225
+T: E E : s100 : s110 : 0.025
+T: E E : s100 : s111 : 0.225 
+T: E E : s101 : s000 : 0.025 
+T: E E : s101 : s001 : 0.225
+T: E E : s101 : s010 : 0.025 
+T: E E : s101 : s011 : 0.225
+T: E E : s101 : s100 : 0.025
+T: E E : s101 : s101 : 0.225
+T: E E : s101 : s110 : 0.025
+T: E E : s101 : s111 : 0.225 
+T: E E : s110 : s000 : 0.025 
+T: E E : s110 : s001 : 0.225
+T: E E : s110 : s010 : 0.025 
+T: E E : s110 : s011 : 0.225
+T: E E : s110 : s100 : 0.025
+T: E E : s110 : s101 : 0.225
+T: E E : s110 : s110 : 0.025
+T: E E : s110 : s111 : 0.225 
+T: E E : s111 : s000 : 0.025 
+T: E E : s111 : s001 : 0.225
+T: E E : s111 : s010 : 0.025 
+T: E E : s111 : s011 : 0.225
+T: E E : s111 : s100 : 0.025
+T: E E : s111 : s101 : 0.225
+T: E E : s111 : s110 : 0.025
+T: E E : s111 : s111 : 0.225 
+# It is somewhat unlikely (30% of the time) that with joint action <A E>
+# the enemy is not being attacked in any successor state 
+# Note: 4 successor states have the enemy not being attacked.
+#       So these 4 states added together make the 30% (i.e. 7.5% * 4)
+T: A E : s000 : s000 : 0.075 
+T: A E : s000 : s001 : 0.175
+T: A E : s000 : s010 : 0.075 
+T: A E : s000 : s011 : 0.175
+T: A E : s000 : s100 : 0.075
+T: A E : s000 : s101 : 0.175
+T: A E : s000 : s110 : 0.075
+T: A E : s000 : s111 : 0.175
+T: A E : s001 : s000 : 0.075 
+T: A E : s001 : s001 : 0.175
+T: A E : s001 : s010 : 0.075 
+T: A E : s001 : s011 : 0.175
+T: A E : s001 : s100 : 0.075
+T: A E : s001 : s101 : 0.175
+T: A E : s001 : s110 : 0.075
+T: A E : s001 : s111 : 0.175 
+T: A E : s010 : s000 : 0.075 
+T: A E : s010 : s001 : 0.175
+T: A E : s010 : s010 : 0.075 
+T: A E : s010 : s011 : 0.175
+T: A E : s010 : s100 : 0.075
+T: A E : s010 : s101 : 0.175
+T: A E : s010 : s110 : 0.075
+T: A E : s010 : s111 : 0.175 
+T: A E : s011 : s000 : 0.075 
+T: A E : s011 : s001 : 0.175
+T: A E : s011 : s010 : 0.075 
+T: A E : s011 : s011 : 0.175
+T: A E : s011 : s100 : 0.075
+T: A E : s011 : s101 : 0.175
+T: A E : s011 : s110 : 0.075
+T: A E : s011 : s111 : 0.175 
+T: A E : s100 : s000 : 0.075 
+T: A E : s100 : s001 : 0.175
+T: A E : s100 : s010 : 0.075 
+T: A E : s100 : s011 : 0.175
+T: A E : s100 : s100 : 0.075
+T: A E : s100 : s101 : 0.175
+T: A E : s100 : s110 : 0.075
+T: A E : s100 : s111 : 0.175 
+T: A E : s101 : s000 : 0.075 
+T: A E : s101 : s001 : 0.175
+T: A E : s101 : s010 : 0.075 
+T: A E : s101 : s011 : 0.175
+T: A E : s101 : s100 : 0.075
+T: A E : s101 : s101 : 0.175
+T: A E : s101 : s110 : 0.075
+T: A E : s101 : s111 : 0.175 
+T: A E : s110 : s000 : 0.075 
+T: A E : s110 : s001 : 0.175
+T: A E : s110 : s010 : 0.075 
+T: A E : s110 : s011 : 0.175
+T: A E : s110 : s100 : 0.075
+T: A E : s110 : s101 : 0.175
+T: A E : s110 : s110 : 0.075
+T: A E : s110 : s111 : 0.175 
+T: A E : s111 : s000 : 0.075 
+T: A E : s111 : s001 : 0.175
+T: A E : s111 : s010 : 0.075 
+T: A E : s111 : s011 : 0.175
+T: A E : s111 : s100 : 0.075
+T: A E : s111 : s101 : 0.175
+T: A E : s111 : s110 : 0.075
+T: A E : s111 : s111 : 0.175 
+# It is somewhat unlikely (30% of the time) that with joint action <E A>
+# the enemy is not being attacked in any successor state 
+# Note: 4 successor states have the enemy not being attacked.
+#       So these 4 states added together make the 30% (i.e. 7.5% * 4)
+T: E A : s000 : s000 : 0.075 
+T: E A : s000 : s001 : 0.175
+T: E A : s000 : s010 : 0.075 
+T: E A : s000 : s011 : 0.175
+T: E A : s000 : s100 : 0.075
+T: E A : s000 : s101 : 0.175
+T: E A : s000 : s110 : 0.075
+T: E A : s000 : s111 : 0.175
+T: E A : s001 : s000 : 0.075 
+T: E A : s001 : s001 : 0.175
+T: E A : s001 : s010 : 0.075 
+T: E A : s001 : s011 : 0.175
+T: E A : s001 : s100 : 0.075
+T: E A : s001 : s101 : 0.175
+T: E A : s001 : s110 : 0.075
+T: E A : s001 : s111 : 0.175 
+T: E A : s010 : s000 : 0.075 
+T: E A : s010 : s001 : 0.175
+T: E A : s010 : s010 : 0.075 
+T: E A : s010 : s011 : 0.175
+T: E A : s010 : s100 : 0.075
+T: E A : s010 : s101 : 0.175
+T: E A : s010 : s110 : 0.075
+T: E A : s010 : s111 : 0.175 
+T: E A : s011 : s000 : 0.075 
+T: E A : s011 : s001 : 0.175
+T: E A : s011 : s010 : 0.075 
+T: E A : s011 : s011 : 0.175
+T: E A : s011 : s100 : 0.075
+T: E A : s011 : s101 : 0.175
+T: E A : s011 : s110 : 0.075
+T: E A : s011 : s111 : 0.175 
+T: E A : s100 : s000 : 0.075 
+T: E A : s100 : s001 : 0.175
+T: E A : s100 : s010 : 0.075 
+T: E A : s100 : s011 : 0.175
+T: E A : s100 : s100 : 0.075
+T: E A : s100 : s101 : 0.175
+T: E A : s100 : s110 : 0.075
+T: E A : s100 : s111 : 0.175 
+T: E A : s101 : s000 : 0.075 
+T: E A : s101 : s001 : 0.175
+T: E A : s101 : s010 : 0.075 
+T: E A : s101 : s011 : 0.175
+T: E A : s101 : s100 : 0.075
+T: E A : s101 : s101 : 0.175
+T: E A : s101 : s110 : 0.075
+T: E A : s101 : s111 : 0.175 
+T: E A : s110 : s000 : 0.075 
+T: E A : s110 : s001 : 0.175
+T: E A : s110 : s010 : 0.075 
+T: E A : s110 : s011 : 0.175
+T: E A : s110 : s100 : 0.075
+T: E A : s110 : s101 : 0.175
+T: E A : s110 : s110 : 0.075
+T: E A : s110 : s111 : 0.175 
+T: E A : s111 : s000 : 0.075 
+T: E A : s111 : s001 : 0.175
+T: E A : s111 : s010 : 0.075 
+T: E A : s111 : s011 : 0.175
+T: E A : s111 : s100 : 0.075
+T: E A : s111 : s101 : 0.175
+T: E A : s111 : s110 : 0.075
+T: E A : s111 : s111 : 0.175 
+# 
+# 
+# Observation probabilities 
+# Pr(jo|ja, s') - a |S|x|JO| matrix 
+# O: <a1 a2...an> : <end-state> : <o1 o2 ... om> : %f 
+O: * * : 
+uniform 
+# 
+#
+# If both agents are attacking however the end-state shows no one being attacked,  
+# then it is highly unlikely the agents see the enemy. Therefore we have the following percentages 
+# S S has a 5% chance, 
+# S D or D S take up 25% together 
+# D D (the most likely situtation) gets 70% 
+O: A A : s000 : S S : 0.05 
+O: A A : s000 : S D : 0.125 
+O: A A : s000 : D S : 0.125 
+O: A A : s000 : D D : 0.70 
+# 
+# If both agents are attacking and as a result if anyone is being attacked,  
+# the likelihood of seeing the enemy is much better, the opposite in fact of the above s000 state. 
+# Note: Obviously we can get even more detailed but for now we have the following: 
+# S S has a 70% chance 
+# S D or D S take up 25 % together (as before) 
+# D D (the least likely situation) gets 5% 
+O: A A : s001 : S S : 0.70 
+O: A A : s001 : S D : 0.125 
+O: A A : s001 : D S : 0.125 
+O: A A : s001 : D D : 0.05
+O: A A : s010 : S S : 0.70 
+O: A A : s010 : S D : 0.125 
+O: A A : s010 : D S : 0.125 
+O: A A : s010 : D D : 0.05 
+O: A A : s011 : S S : 0.70 
+O: A A : s011 : S D : 0.125 
+O: A A : s011 : D S : 0.125 
+O: A A : s011 : D D : 0.05 
+O: A A : s100 : S S : 0.70 
+O: A A : s100 : S D : 0.125 
+O: A A : s100 : D S : 0.125 
+O: A A : s100 : D D : 0.05 
+O: A A : s101 : S S : 0.70 
+O: A A : s101 : S D : 0.125 
+O: A A : s101 : D S : 0.125 
+O: A A : s101 : D D : 0.05 
+O: A A : s110 : S S : 0.70 
+O: A A : s110 : S D : 0.125 
+O: A A : s110 : D S : 0.125 
+O: A A : s110 : D D : 0.05 
+O: A A : s111 : S S : 0.70 
+O: A A : s111 : S D : 0.125 
+O: A A : s111 : D S : 0.125 
+O: A A : s111 : D D : 0.05 
+# 
+# If one agent is attacking and the other escaping however the end-state shows no one being attacked,  
+# then it is slightly unlikely the agents see the enemy. Therefore we have the following percentages 
+# S S has a 15% chance, 
+# S D or D S take up 35% together 
+# D D (the most likely situtation) gets 50% 
+O: A E : s000 : S S : 0.15 
+O: A E : s000 : S D : 0.175 
+O: A E : s000 : D S : 0.175 
+O: A E : s000 : D D : 0.5 
+# 
+# If one agent is attacking, the other agent escaping and as a result if anyone is being attacked,  
+# the likelihood of seeing the enemy is slightly more than not seeing the enemy. 
+# Note: Obviously we can get even more detailed but for now we have the following: 
+# S S or D D has a 40% chance together 
+# S D or D S take up 60% together (which is probably the likely scenario if one is attacking and the other escaping)
+# D D (the least likely situation) gets 5% 
+O: A E : s001 : S S : 0.20 
+O: A E : s001 : S D : 0.30 
+O: A E : s001 : D S : 0.30 
+O: A E : s001 : D D : 0.20
+O: A E : s010 : S S : 0.20 
+O: A E : s010 : S D : 0.30 
+O: A E : s010 : D S : 0.30 
+O: A E : s010 : D D : 0.20 
+O: A E : s011 : S S : 0.20 
+O: A E : s011 : S D : 0.30 
+O: A E : s011 : D S : 0.30 
+O: A E : s011 : D D : 0.20 
+O: A E : s100 : S S : 0.20 
+O: A E : s100 : S D : 0.30 
+O: A E : s100 : D S : 0.30 
+O: A E : s100 : D D : 0.20 
+O: A E : s101 : S S : 0.20 
+O: A E : s101 : S D : 0.30 
+O: A E : s101 : D S : 0.30 
+O: A E : s101 : D D : 0.20 
+O: A E : s110 : S S : 0.20 
+O: A E : s110 : S D : 0.30 
+O: A E : s110 : D S : 0.30 
+O: A E : s110 : D D : 0.20 
+O: A E : s111 : S S : 0.20 
+O: A E : s111 : S D : 0.30 
+O: A E : s111 : D S : 0.30 
+O: A E : s111 : D D : 0.20 
+# 
+# If one agent is attacking and the other escaping however the end-state shows no one being attacked,  
+# then it is slightly unlikely the agents see the enemy. Therefore we have the following percentages 
+# S S has a 15% chance, 
+# S D or D S take up 35% together 
+# D D (the most likely situtation) gets 50% 
+O: E A : s000 : S S : 0.15 
+O: E A : s000 : S D : 0.175 
+O: E A : s000 : D S : 0.175 
+O: E A : s000 : D D : 0.5 
+# 
+# If one agent is attacking, the other agent escaping and as E Aesult if anyone is being attacked,  
+# the likelihood of seeing the enemy is slightly more than not seeing the enemy. 
+# Note: Obviously we can get even more detailed but for now we have the following: 
+# S S or D D has a 40% chance together 
+# S D or D S take up 60% together (which is probably the likely scenario if one is attacking and the other escaping) 
+# D D (the least likely situation) gets 5% 
+O: E A : s001 : S S : 0.20 
+O: E A : s001 : S D : 0.30 
+O: E A : s001 : D S : 0.30 
+O: E A : s001 : D D : 0.20
+O: E A : s010 : S S : 0.20 
+O: E A : s010 : S D : 0.30 
+O: E A : s010 : D S : 0.30 
+O: E A : s010 : D D : 0.20 
+O: E A : s011 : S S : 0.20 
+O: E A : s011 : S D : 0.30 
+O: E A : s011 : D S : 0.30 
+O: E A : s011 : D D : 0.20 
+O: E A : s100 : S S : 0.20 
+O: E A : s100 : S D : 0.30 
+O: E A : s100 : D S : 0.30 
+O: E A : s100 : D D : 0.20 
+O: E A : s101 : S S : 0.20 
+O: E A : s101 : S D : 0.30 
+O: E A : s101 : D S : 0.30 
+O: E A : s101 : D D : 0.20 
+O: E A : s110 : S S : 0.20 
+O: E A : s110 : S D : 0.30 
+O: E A : s110 : D S : 0.30 
+O: E A : s110 : D D : 0.20 
+O: E A : s111 : S S : 0.20 
+O: E A : s111 : S D : 0.30 
+O: E A : s111 : D S : 0.30 
+O: E A : s111 : D D : 0.20 
+#
+# If both agents are escaping however the end-state shows no one being attacked,  
+# then it is highly unlikely the agents see the enemy. Therefore we have the following percentages 
+# S S has a 1% chance, 
+# S D or D S take up 4% together 
+# D D (the most likely situtation) gets 95% 
+O: E E : s000 : S S : 0.01 
+O: E E : s000 : S D : 0.02 
+O: E E : s000 : D S : 0.02 
+O: E E : s000 : D D : 0.95 
+# 
+# If both agents are escaping and as a result if anyone is being attacked,  
+# the likelihood of seeing the enemy is only slightly better than if no one was being attacked, 
+# the opposite of the Attack Attack joint action. 
+# Note: Obviously we can get even more detailed but for now we have the following: 
+# S S has a 5% chance 
+# S D or D S take up 30% together 
+# D D (the most likely situation) gets 70% 
+O: E E : s001 : S S : 0.05 
+O: E E : s001 : S D : 0.125 
+O: E E : s001 : D S : 0.125 
+O: E E : s001 : D D : 0.70
+O: E E : s010 : S S : 0.05 
+O: E E : s010 : S D : 0.125 
+O: E E : s010 : D S : 0.125 
+O: E E : s010 : D D : 0.70 
+O: E E : s011 : S S : 0.05 
+O: E E : s011 : S D : 0.125 
+O: E E : s011 : D S : 0.125 
+O: E E : s011 : D D : 0.70 
+O: E E : s100 : S S : 0.05 
+O: E E : s100 : S D : 0.125 
+O: E E : s100 : D S : 0.125 
+O: E E : s100 : D D : 0.70 
+O: E E : s101 : S S : 0.05 
+O: E E : s101 : S D : 0.125 
+O: E E : s101 : D S : 0.125 
+O: E E : s101 : D D : 0.70 
+O: E E : s110 : S S : 0.05 
+O: E E : s110 : S D : 0.125 
+O: E E : s110 : D S : 0.125 
+O: E E : s110 : D D : 0.70 
+O: E E : s111 : S S : 0.05 
+O: E E : s111 : S D : 0.125 
+O: E E : s111 : D S : 0.125 
+O: E E : s111 : D D : 0.70 
+# 
+#
+# The Reward function 
+# R(s,ja) which is specified by: 
+# R: <a1 a2...an> : <start-state> : <end-state> : <o1 o2 ... om> : %f 
+R: A A : s000 : * : * : 100 
+R: A E : s000 : * : * : -100 
+R: E A : s000 : * : * : -100 
+R: E E : s000 : * : * : 0 
+# 
+R: A A : s001 : * : * : 100 
+R: A E : s001 : * : * : -50 
+R: E A : s001 : * : * : -50 
+R: E E : s001 : * : * : -100 
+# 
+R: A A : s010 : * : * : 50 
+R: A E : s010 : * : * : 100 
+R: E A : s010 : * : * : -100 
+R: E E : s010 : * : * : -50 
+# 
+R: A A : s011 : * : * : 50 
+R: A E : s011 : * : * : 100 
+R: E A : s011 : * : * : -100 
+R: E E : s011 : * : * : 0 
+# 
+R: A A : s100 : * : * : 50 
+R: A E : s100 : * : * : -100 
+R: E A : s100 : * : * : 100 
+R: E E : s100 : * : * : -50 
+# 
+R: A A : s101 : * : * : 50 
+R: A E : s101 : * : * : -100 
+R: E A : s101 : * : * : 100 
+R: E E : s101 : * : * : 0 
+# 
+R: A A : s110 : * : * : 50 
+R: A E : s110 : * : * : -100 
+R: E A : s110 : * : * : -100 
+R: E E : s110 : * : * : 0 
+# 
+R: A A : s111 : * : * : 50 
+R: A E : s111 : * : * : 100 
+R: E A : s111 : * : * : 100 
+R: E E : s111 : * : * : 50
