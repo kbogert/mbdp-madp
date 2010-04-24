@@ -1,19 +1,26 @@
 #include "MBDPAIModule.h"
+#include "JESPDynamicProgrammingPlanner.h"
+#include "SimulationDecPOMDPDiscrete.h"
+#include "SimulationResult.h"
+
+#include "argumentHandlers.h"
+#include "argumentUtils.h"
+
 
 using namespace BWAPI;
 using namespace std;
 
-void ExampleAIModule::onStart()
+using namespace ArgumentHandlers;
+
+
+void MBDPAIModule::onStart()
 {
-  Broodwar->sendText("Hello world!");
-  Broodwar->printf("The map is %s, a %d player map",Broodwar->mapName().c_str(),Broodwar->getStartLocations().size());
   // Enable some cheat flags
   Broodwar->enableFlag(Flag::UserInput);
   // Uncomment to enable complete map information
   //Broodwar->enableFlag(Flag::CompleteMapInformation);
 
   show_visibility_data=false;
-  curTarget = NULL;
 
   if (Broodwar->isReplay())
   {
@@ -32,48 +39,39 @@ void ExampleAIModule::onStart()
       Broodwar->self()->getRace().getName().c_str(),
       Broodwar->enemy()->getRace().getName().c_str());
 
-    //send each worker to the mineral field that is closest to it
-    for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++)
-    {
-      if ((*i)->getType().isWorker())
-      {
-        Unit* closestMineral=NULL;
-        for(std::set<Unit*>::iterator m=Broodwar->getMinerals().begin();m!=Broodwar->getMinerals().end();m++)
-        {
-          if (closestMineral==NULL || (*i)->getDistance(*m)<(*i)->getDistance(closestMineral))
-            closestMineral=*m;
-        }
-        if (closestMineral!=NULL)
-          (*i)->rightClick(closestMineral);
-      }
-      else if ((*i)->getType().isResourceDepot())
-      {
-        //if this is a center, tell it to build the appropiate type of worker
-        if ((*i)->getType().getRace()!=Races::Zerg)
-        {
-          (*i)->train(*Broodwar->self()->getRace().getWorker());
-        }
-        else //if we are Zerg, we need to select a larva and morph it into a drone
-        {
-          std::set<Unit*> myLarva=(*i)->getLarva();
-          if (myLarva.size()>0)
-          {
-            Unit* larva=*myLarva.begin();
-            larva->morph(UnitTypes::Zerg_Drone);
-          }
-        }
-      }
-    }
+	// Initialize planner
+
+	ArgumentHandlers::Arguments args;
+//	args.infiniteHorizon = 1;
+	args.horizon = 3;
+//	args.dpf = std::string("D:\\CSCI-6900\\problems\\dectiger.dpomdp").c_str();
+	args.problem_type = ProblemType::DT;
+	DecPOMDPDiscreteInterface & decpomdp = * ArgumentUtils::GetDecPOMDPDiscreteInterfaceFromArgs(args);
+    
+    //Initialization of the planner with typical options for JESP:
+    PlanningUnitMADPDiscreteParameters params;
+    params.SetComputeAll(true);
+    params.SetComputeJointActionObservationHistories(false);
+    params.SetComputeJointObservationHistories(false);
+    params.SetComputeJointBeliefs(false);
+    if(args.sparse)
+        params.SetUseSparseJointBeliefs(true);
+    else
+        params.SetUseSparseJointBeliefs(false);
+
+    planner = new JESPDynamicProgrammingPlanner (params,args.horizon,&decpomdp);
+
+	Broodwar->printf("JESP planner initialized"); 
   }
 }
-void ExampleAIModule::onEnd(bool isWinner)
+void MBDPAIModule::onEnd(bool isWinner)
 {
   if (isWinner)
   {
     //log win to file
   }
 }
-void ExampleAIModule::onFrame()
+void MBDPAIModule::onFrame()
 {
   if (show_visibility_data)
   {    
@@ -99,102 +97,63 @@ void ExampleAIModule::onFrame()
 
   drawStats();
 
+  // perform observations, update state variables
 
-  if (curTarget == NULL) {
+  // update planner, run plan()
 
-	  // pick a visible enemy
-	  for (std::set<Player *>::const_iterator iter = Broodwar->getPlayers().begin(); iter != Broodwar->getPlayers().end(); iter++) {
-		  if ((*iter)->getID() != Broodwar->self()->getID()) {
-			  // just pick the first one stupidly
-			  if((*iter)->getUnits().size() > 0)
-				  curTarget = (*(*iter)->getUnits().begin());
-			  if (curTarget != NULL)
-				break;
-		  }
-	  }
+    planner->Plan();
+    double V = planner->GetExpectedReward();
+	JointPolicyPureVector * jp = planner->GetJointPolicyPureVector();
 
-	  if (curTarget != NULL) {
-			// find all my units, set to attack!
-			for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++)
-			{
-				(*i)->attackUnit(curTarget);
-			}
-	  }
-  }
+
+
+//	for (int i = 0; i < jp->GetNrAgents(); i ++) {
+//		for (int j = 0; j < jp->GetNrDomainElements(i); j++) {
+//			Broodwar->printf("ActionIndex for %d : %d", i, jp->GetActionIndex(i,j));
+
+//		}
+
+//	}
+
+	Broodwar->printf("Policy: %s", jp->SoftPrintBrief().c_str());
+
+  // enact policy
+
 }
 
-void ExampleAIModule::onUnitCreate(BWAPI::Unit* unit)
+void MBDPAIModule::onUnitCreate(BWAPI::Unit* unit)
 {
-  if (!Broodwar->isReplay())
-    Broodwar->sendText("A %s [%x] has been created at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
-  else
-  {
-    /*if we are in a replay, then we will print out the build order
-    (just of the buildings, not the units).*/
-    if (unit->getType().isBuilding() && unit->getPlayer()->isNeutral()==false)
-    {
-      int seconds=Broodwar->getFrameCount()/24;
-      int minutes=seconds/60;
-      seconds%=60;
-      Broodwar->sendText("%.2d:%.2d: %s creates a %s",minutes,seconds,unit->getPlayer()->getName().c_str(),unit->getType().getName().c_str());
-    }
-  }
+
 }
-void ExampleAIModule::onUnitDestroy(BWAPI::Unit* unit)
+void MBDPAIModule::onUnitDestroy(BWAPI::Unit* unit)
 {
   if (!Broodwar->isReplay())
     Broodwar->sendText("A %s [%x] has been destroyed at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
 
-  if (unit == curTarget) {
-		curTarget = NULL;
-  }
 }
 
-void ExampleAIModule::onUnitMorph(BWAPI::Unit* unit)
+void MBDPAIModule::onUnitMorph(BWAPI::Unit* unit)
 {
-  if (!Broodwar->isReplay())
-    Broodwar->sendText("A %s [%x] has been morphed at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
-  else
-  {
-    /*if we are in a replay, then we will print out the build order
-    (just of the buildings, not the units).*/
-    if (unit->getType().isBuilding() && unit->getPlayer()->isNeutral()==false)
-    {
-      int seconds=Broodwar->getFrameCount()/24;
-      int minutes=seconds/60;
-      seconds%=60;
-      Broodwar->sendText("%.2d:%.2d: %s morphs a %s",minutes,seconds,unit->getPlayer()->getName().c_str(),unit->getType().getName().c_str());
-    }
-  }
+
 }
-void ExampleAIModule::onUnitShow(BWAPI::Unit* unit)
+void MBDPAIModule::onUnitShow(BWAPI::Unit* unit)
 {
-  if (!Broodwar->isReplay())
-    Broodwar->sendText("A %s [%x] has been spotted at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
 }
-void ExampleAIModule::onUnitHide(BWAPI::Unit* unit)
+void MBDPAIModule::onUnitHide(BWAPI::Unit* unit)
 {
-  if (!Broodwar->isReplay())
-    Broodwar->sendText("A %s [%x] was last seen at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
 }
-void ExampleAIModule::onUnitRenegade(BWAPI::Unit* unit)
+void MBDPAIModule::onUnitRenegade(BWAPI::Unit* unit)
 {
-  if (!Broodwar->isReplay())
-    Broodwar->sendText("A %s [%x] is now owned by %s",unit->getType().getName().c_str(),unit,unit->getPlayer()->getName().c_str());
 }
-void ExampleAIModule::onPlayerLeft(BWAPI::Player* player)
+void MBDPAIModule::onPlayerLeft(BWAPI::Player* player)
 {
   Broodwar->sendText("%s left the game.",player->getName().c_str());
 }
-void ExampleAIModule::onNukeDetect(BWAPI::Position target)
+void MBDPAIModule::onNukeDetect(BWAPI::Position target)
 {
-  if (target!=Positions::Unknown)
-    Broodwar->printf("Nuclear Launch Detected at (%d,%d)",target.x(),target.y());
-  else
-    Broodwar->printf("Nuclear Launch Detected");
 }
 
-bool ExampleAIModule::onSendText(std::string text)
+bool MBDPAIModule::onSendText(std::string text)
 {
   if (text=="/show players")
   {
@@ -214,7 +173,7 @@ bool ExampleAIModule::onSendText(std::string text)
   return true;
 }
 
-void ExampleAIModule::drawStats()
+void MBDPAIModule::drawStats()
 {
   std::set<Unit*> myUnits = Broodwar->self()->getUnits();
   Broodwar->drawTextScreen(5,0,"I have %d units:",myUnits.size());
@@ -235,7 +194,7 @@ void ExampleAIModule::drawStats()
   }
 }
 
-void ExampleAIModule::showPlayers()
+void MBDPAIModule::showPlayers()
 {
   std::set<Player*> players=Broodwar->getPlayers();
   for(std::set<Player*>::iterator i=players.begin();i!=players.end();i++)
@@ -243,7 +202,7 @@ void ExampleAIModule::showPlayers()
     Broodwar->printf("Player [%d]: %s is in force: %s",(*i)->getID(),(*i)->getName().c_str(), (*i)->getForce()->getName().c_str());
   }
 }
-void ExampleAIModule::showForces()
+void MBDPAIModule::showForces()
 {
   std::set<Force*> forces=Broodwar->getForces();
   for(std::set<Force*>::iterator i=forces.begin();i!=forces.end();i++)
@@ -255,4 +214,13 @@ void ExampleAIModule::showForces()
       Broodwar->printf("  - Player [%d]: %s",(*j)->getID(),(*j)->getName().c_str());
     }
   }
+}
+
+
+void MBDPAIModule::attackClosest(BWAPI::Unit * attacker) {
+
+}
+
+void MBDPAIModule::flee(BWAPI::Unit * unit) {
+
 }

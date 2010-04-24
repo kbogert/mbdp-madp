@@ -2,9 +2,11 @@
 #include <BWAPI.h>
 #include <windows.h>
 
+#include "SimulationDecPOMDPDiscrete.h"
+
 DWORD WINAPI AnalyzeThread();
 
-class ExampleAIModule : public BWAPI::AIModule
+class MBDPAIModule : public BWAPI::AIModule
 {
 public:
   virtual void onStart();
@@ -22,11 +24,14 @@ public:
 
 protected:
 
-  void drawStats(); //not part of BWAPI::AIModule
+	void attackClosest(BWAPI::Unit * attacker);
+	void flee(BWAPI::Unit * unit);
+
+  void drawStats();
   void showPlayers();
   void showForces();
   
   bool show_visibility_data;
 
-  BWAPI::Unit * curTarget;
+  PlanningUnitDecPOMDPDiscrete* planner;
 };
