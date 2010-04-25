@@ -119,11 +119,11 @@ void MBDPAIModule::onFrame()
 			obs->lastOrder = UnitObservation::Idle;
 		}
 
-		if (obs->lastHealth < (*i)->getShields() + (*i)->getHitPoints()) {
+		if (obs->lastHealth > (*i)->getShields() + (*i)->getHitPoints()) {
 			// unit has just been attacked
-			obs->lastHealth = (*i)->getShields() + (*i)->getHitPoints();
-			obs->attackedEventDate = time(0) + ATTACK_STATE_LASTS_MS;
+			obs->attackedEventDate = clock() + ATTACK_STATE_LASTS_MS;
 		}
+		obs->lastHealth = (*i)->getShields() + (*i)->getHitPoints();
 	}
 
   // update planner, run plan()
@@ -156,15 +156,18 @@ void MBDPAIModule::onFrame()
 				// gonna map this to a flee
 
 				// if the unit is already fleeing, then don't change
-				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Flee)
+				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Flee) {
+					unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Flee;
 					flee(*i);
+				}
 			} else {
 				// gonna map this to a attack
 
 				// if the unit is already attacking, then don't change
-				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Attack)
-
+				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Attack) {
+					unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Attack;
 					attackClosest(*i);
+				}
 			}
 		}
 }
@@ -226,8 +229,14 @@ void MBDPAIModule::drawStats()
   std::set<Unit*> myUnits = Broodwar->self()->getUnits();
   Broodwar->drawTextScreen(5,0,"I have %d units:",myUnits.size());
   std::map<UnitType, int> unitTypeCounts;
+  int underAttack = 0;
+  int attacking = 0;
   for(std::set<Unit*>::iterator i=myUnits.begin();i!=myUnits.end();i++)
   {
+	  if (isUnderAttack(*i))
+		  underAttack ++;
+	  if (isAttacking(*i))
+		  attacking ++;
     if (unitTypeCounts.find((*i)->getType())==unitTypeCounts.end())
     {
       unitTypeCounts.insert(std::make_pair((*i)->getType(),0));
@@ -235,11 +244,10 @@ void MBDPAIModule::drawStats()
     unitTypeCounts.find((*i)->getType())->second++;
   }
   int line=1;
-  for(std::map<UnitType,int>::iterator i=unitTypeCounts.begin();i!=unitTypeCounts.end();i++)
-  {
-    Broodwar->drawTextScreen(5,16*line,"- %d %ss",(*i).second, (*i).first.getName().c_str());
-    line++;
-  }
+  Broodwar->drawTextScreen(5,16*line,"Under Attack - %d",underAttack);
+  line++;
+  Broodwar->drawTextScreen(5,16*line,"Attacking - %d",attacking);
+  
 }
 
 void MBDPAIModule::showPlayers()
@@ -321,4 +329,22 @@ void MBDPAIModule::flee(BWAPI::Unit * unit) {
 
 
 	}
+}
+
+bool MBDPAIModule::isUnderAttack(BWAPI::Unit *unit) {
+	if (unitObservations.find(unit->getID()) == unitObservations.end()) {
+		return false;
+
+	}
+
+	return unitObservations[unit->getID()]->attackedEventDate >= clock();
+}
+
+bool MBDPAIModule::isAttacking(BWAPI::Unit *unit) {
+	if (unitObservations.find(unit->getID()) == unitObservations.end()) {
+		return false;
+
+	}
+
+	return unitObservations[unit->getID()]->lastOrder == UnitObservation::Attack;
 }

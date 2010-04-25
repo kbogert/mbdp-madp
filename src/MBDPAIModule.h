@@ -7,7 +7,7 @@
 
 DWORD WINAPI AnalyzeThread();
 
-#define ATTACK_STATE_LASTS_MS 750
+#define ATTACK_STATE_LASTS_MS CLOCKS_PER_SEC
 
 class UnitObservation {
 public:
@@ -19,13 +19,12 @@ public:
 
 	UnitObservation() {
 		lastOrder = Idle;
-		attackedEventDate = time(0);
-		attackedEventDate --;
+		attackedEventDate = 0;
 		lastHealth = -1;
 	}
 
 	Order lastOrder;
-	time_t attackedEventDate; // if in the past, unit is not under attack
+	clock_t attackedEventDate; // if in the past, unit is not under attack
 	int lastHealth;
 };
 
@@ -61,4 +60,7 @@ protected:
   PlanningUnitDecPOMDPDiscrete* planner;
 
   std::map<int, UnitObservation *> unitObservations;
+
+  bool isUnderAttack(BWAPI::Unit * unit);
+  bool isAttacking(BWAPI::Unit * unit);
 };
