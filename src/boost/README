@@ -1,0 +1,6 @@
+This are the pieces of the Boost C++ libraries that are used in the
+MADP Toolbox. Copied from the Debian libboost-dev packages, version
+1.34.1-11.
+
+This did not compile with GCC 4.4, so I applied the patch provided 
+at http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=528288

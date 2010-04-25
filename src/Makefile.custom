@@ -1,0 +1,57 @@
+# $Id: Makefile.custom 2964 2008-11-02 16:44:12Z mtjspaan $
+# Contains several project-wide Makefile options
+
+# the debug flags used - according to 
+# http://sourceware.org/gdb/current/onlinedocs/gdb_13.html#SEC111
+# dwarf-2 is best for c++ and gdb
+DEBUG_FLAG = -gdwarf-2
+
+# Optimization flags used for building normal and profiling libraries.
+# -DNDEBUG speeds up the boost::numeric::ublas operations
+CPP_OPTIMIZATION_FLAGS = -O3 -DNDEBUG
+# Machine architecture specific flags
+MARCH_FLAGS = 
+
+MADP_INCLUDES = -I$(top_srcdir)/src/base -I$(top_srcdir)/src/include\
+ -I$(top_srcdir)/src/support -I$(top_srcdir)/src/planning\
+ -I$(top_srcdir)/src/parser\
+ -isystem$(top_srcdir)/src/boost
+MADP_LD = 
+
+# Lists of libs to be linked with binaries.
+# Note that the linking order matters, in order to correctly resolve symbols
+MADPLIBS_NORMAL_NOPARSER_NOPLANNING = \
+$(top_builddir)/src/base/libMADPBase.la
+MADPLIBS_NORMAL_NOPARSER = \
+ $(top_builddir)/src/planning/libMADPPlanning.la\
+ $(top_builddir)/src/support/libMADPSupport.la\
+ $(MADPLIBS_NORMAL_NOPARSER_NOPLANNING)
+MADPLIBS_NORMAL_NOPLANNING = \
+ $(top_builddir)/src/parser/libMADPParser.la\
+ $(MADPLIBS_NORMAL_NOPARSER_NOPLANNING)
+MADPLIBS_NORMAL = \
+ $(top_builddir)/src/parser/libMADPParser.la $(MADPLIBS_NORMAL_NOPARSER)
+
+MADPLIBS_DEBUG_NOPARSER_NOPLANNING = \
+ $(top_builddir)/src/base/libMADPBaseDebug.a
+MADPLIBS_DEBUG_NOPARSER = \
+ $(top_builddir)/src/planning/libMADPPlanningDebug.a\
+ $(top_builddir)/src/support/libMADPSupportDebug.a\
+ $(MADPLIBS_DEBUG_NOPARSER_NOPLANNING)
+MADPLIBS_DEBUG_NOPLANNING = \
+ $(top_builddir)/src/parser/libMADPParserDebug.a\
+ $(MADPLIBS_DEBUG_NOPARSER_NOPLANNING)
+MADPLIBS_DEBUG = \
+ $(top_builddir)/src/parser/libMADPParserDebug.a $(MADPLIBS_DEBUG_NOPARSER)
+
+MADPLIBS_PROFILE_NOPARSER_NOPLANNING = \
+ $(top_builddir)/src/base/libMADPBaseProfile.la
+MADPLIBS_PROFILE_NOPARSER = \
+ $(top_builddir)/src/planning/libMADPPlanningProfile.la\
+ $(top_builddir)/src/support/libMADPSupportProfile.la\
+ $(MADPLIBS_PROFILE_NOPARSER_NOPLANNING)
+MADPLIBS_PROFILE_NOPLANNING = \
+ $(top_builddir)/src/parser/libMADPParserProfile.la\
+ $(MADPLIBS_PROFILE_NOPARSER_NOPLANNING)
+MADPLIBS_PROFILE = \
+ $(top_builddir)/src/parser/libMADPParserProfile.la $(MADPLIBS_PROFILE_NOPARSER)
