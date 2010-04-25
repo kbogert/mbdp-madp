@@ -5,6 +5,11 @@
 #include "SimulationDecPOMDPDiscrete.h"
 #include <time.h>
 
+#include <vector>
+#include <set>
+#include <map>
+#include <sstream>
+
 DWORD WINAPI AnalyzeThread();
 
 #define ATTACK_STATE_LASTS_MS CLOCKS_PER_SEC
@@ -31,6 +36,7 @@ public:
 class MBDPAIModule : public BWAPI::AIModule
 {
 public:
+  MBDPAIModule();
   virtual void onStart();
   virtual void onEnd(bool isWinner);
   virtual void onFrame();
@@ -58,9 +64,13 @@ protected:
   bool show_visibility_data;
 
   PlanningUnitDecPOMDPDiscrete* planner;
+  JointPolicyPureVector * jp;
+  bool initFinished;
 
   std::map<int, UnitObservation *> unitObservations;
 
   bool isUnderAttack(BWAPI::Unit * unit);
   bool isAttacking(BWAPI::Unit * unit);
+
+  std::string parsePolicy(std::stringstream & policyStr, bool seeEnemyObs);
 };
