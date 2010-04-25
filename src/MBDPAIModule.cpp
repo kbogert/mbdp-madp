@@ -104,11 +104,31 @@ void MBDPAIModule::onFrame()
   static long long counter = 0;
   counter ++;
 
-  if (counter % 60 != 1) return;
-
   // perform observations, update state variables
 
+	// right now we only observe our own units
+
+	for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
+
+		if (unitObservations.find((*i)->getID()) == unitObservations.end()) {
+			unitObservations[(*i)->getID()] = new UnitObservation();
+		}
+		UnitObservation * obs = unitObservations[(*i)->getID()];
+
+		if ((*i)->isIdle()) {
+			obs->lastOrder = UnitObservation::Idle;
+		}
+
+		if (obs->lastHealth < (*i)->getShields() + (*i)->getHitPoints()) {
+			// unit has just been attacked
+			obs->lastHealth = (*i)->getShields() + (*i)->getHitPoints();
+			obs->attackedEventDate = time(0) + ATTACK_STATE_LASTS_MS;
+		}
+	}
+
   // update planner, run plan()
+
+    if (counter % 30 != 1) return;
 
     planner->Plan();
     double V = planner->GetExpectedReward();
@@ -134,10 +154,17 @@ void MBDPAIModule::onFrame()
 		for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
 			if (policy == "wait_send"){
 				// gonna map this to a flee
-				flee(*i);
+
+				// if the unit is already fleeing, then don't change
+				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Flee)
+					flee(*i);
 			} else {
 				// gonna map this to a attack
-				attackClosest(*i);
+
+				// if the unit is already attacking, then don't change
+				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Attack)
+
+					attackClosest(*i);
 			}
 		}
 }

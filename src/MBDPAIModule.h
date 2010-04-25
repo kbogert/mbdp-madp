@@ -3,8 +3,31 @@
 #include <windows.h>
 
 #include "SimulationDecPOMDPDiscrete.h"
+#include <time.h>
 
 DWORD WINAPI AnalyzeThread();
+
+#define ATTACK_STATE_LASTS_MS 750
+
+class UnitObservation {
+public:
+	enum Order {
+		Attack,
+		Flee,
+		Idle
+	};
+
+	UnitObservation() {
+		lastOrder = Idle;
+		attackedEventDate = time(0);
+		attackedEventDate --;
+		lastHealth = -1;
+	}
+
+	Order lastOrder;
+	time_t attackedEventDate; // if in the past, unit is not under attack
+	int lastHealth;
+};
 
 class MBDPAIModule : public BWAPI::AIModule
 {
@@ -36,4 +59,6 @@ protected:
   bool show_visibility_data;
 
   PlanningUnitDecPOMDPDiscrete* planner;
+
+  std::map<int, UnitObservation *> unitObservations;
 };
