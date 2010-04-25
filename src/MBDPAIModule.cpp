@@ -44,9 +44,9 @@ void MBDPAIModule::onStart()
 	// Initialize planner
 
 	ArgumentHandlers::Arguments args;
-//	args.infiniteHorizon = 1;
-	args.horizon = 3;
-	args.dpf = "D:/CSCI-6900/problems/broadcastChannel.dpomdp";
+	args.infiniteHorizon = 1;
+//	args.horizon = 3;
+	args.dpf = "D:/CSCI-6900/problems/starcraft.dpomdp";
 //	args.problem_type = ProblemType::DT;
 	DecPOMDPDiscreteInterface & decpomdp = * ArgumentUtils::GetDecPOMDPDiscreteInterfaceFromArgs(args);
     
@@ -146,13 +146,15 @@ void MBDPAIModule::onFrame()
 	*/
 //		Broodwar->printf("Joint Action: %s", planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief().c_str());
 
+//A_A
+//E_E
 
   // enact policy
 
 		std::string policy = planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief();
 
 		for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
-			if (policy == "wait_send"){
+			if (policy == "E_E"){
 				// gonna map this to a flee
 
 				// if the unit is already fleeing, then don't change
