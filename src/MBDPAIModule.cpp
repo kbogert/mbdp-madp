@@ -7,15 +7,15 @@
 #include "argumentHandlers.h"
 #include "argumentUtils.h"
 
+#include <list>
 #include <map>
 #include <set>
-#include <vector>
+#include <iostream>
 #include <sstream>
+#include <vector>
 
 using namespace BWAPI;
 using namespace std;
-
-using namespace ArgumentHandlers;
 
 MBDPAIModule::MBDPAIModule() {
 	initFinished = false;
@@ -120,13 +120,10 @@ void MBDPAIModule::onFrame()
 		planner->Plan();
 		jp = planner->GetJointPolicyPureVector();
 	  }
-	  
-	   
-	  
 
 	  // perform observations, update state variables
-
 		// right now we only observe our own units
+
 
 		for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
 
@@ -156,21 +153,21 @@ void MBDPAIModule::onFrame()
 
 //		Broodwar->printf("Joint Action: %s", planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief().c_str());
 
-//		jp->GetIndividualPolicies().size(); 
-
-
 		int unitcounter = 0;
 
+		std::stringstream policy = stringstream(jp->SoftPrint());
+		for (int i = 0; i < jp->GetNrDomainElements(0); i ++) {
+			const JointAction * ja = planner->GetJointAction(jp->GetJointActionIndex(i));
+			ja->Print();
+		}
 
 		for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
 
 			bool seeEnemy = getClosestEnemy(*i) != NULL;
 
-			std::string policy = jp->SoftPrint();
 
-			std::string action = parsePolicy(stringstream(policy), seeEnemy);
-
-
+			std::string action = parsePolicy(policy, seeEnemy);
+			Broodwar->printf("action: %s", action.c_str());
 
 			if (action == "E"){
 				// gonna map this to a flee
@@ -376,14 +373,15 @@ std::string MBDPAIModule::parsePolicy(stringstream &policy, bool seeEnemyObs) {
 	char policyStr[512]; 
 	policy.getline(policyStr, 511);
 
-	char s1[512], s2[512], s3[512];
+	char s0[512], s1[512], s2[512], s3[512];
 	
-	if (sscanf(policyStr,"%*s %511s %511s %511s",s1,s2,s3) <= 0)
+	if (sscanf(policyStr,"%511s %511s %511s %511s",s0,s1,s2,s3) <= 0)
 		return std::string();
 
-	if (strcmp(s1, "S") == 0 && seeEnemyObs) {
+	if (strcmp(s1, "S,") == 0 && seeEnemyObs) {
+		policy.getline(policyStr, 511);
 		return std::string(s3);
-	} else if (strcmp(s1, "D") == 0 && ! seeEnemyObs) {
+	} else if (strcmp(s1, "D,") == 0 && ! seeEnemyObs) {
 		return std::string(s3);
 	}
 	// try parsing the next line
