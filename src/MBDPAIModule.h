@@ -8,7 +8,6 @@
 #include <vector>
 #include <set>
 #include <map>
-#include <sstream>
 
 DWORD WINAPI AnalyzeThread();
 
@@ -78,7 +77,7 @@ protected:
   bool isUnderAttack(BWAPI::Unit * unit);
   bool isAttacking(BWAPI::Unit * unit);
 
-  std::string parsePolicy(std::stringstream & policyStr, bool seeEnemyObs);
+  void parsePolicy(std::string & policyStr);
 
   std::map<int, PolicyTreeNode *> policyTree;
 
