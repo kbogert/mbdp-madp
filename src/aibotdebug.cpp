@@ -683,21 +683,6 @@ int main(int argc, char **argv)
 		testModule->onFrame();
 	}
 
-
-	stringstream test;
-	test << "JointPolicyPureVector:" << endl << "JPol index";
-	test << "Policy of agent 0 (index 8)" << endl;
-	test << "0empty,  --> A" << endl;
-	test << "0empty, S --> B" << endl;
-	test << "0empty, D --> C" << endl;
-	test << "Policy of agent 1 (index 8)" << endl;
-	test << "0empty,  --> D" << endl;
-	test << "0empty, S --> E" << endl;
-	test << "0empty, D --> F" << endl;
-
-//	cout << parsePolicy(test, true);
-//	cout << parsePolicy(test, false);
-
 	// Unload DLL file
 	FreeLibrary(hinstLib);
  
