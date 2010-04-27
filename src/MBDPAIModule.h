@@ -33,9 +33,11 @@ public:
 		attackedEventDate = 0;
 		lastHealth = -1;
 		lastPolicyTreeNode = NULL;
+		lastTarget = NULL;
 	}
 
 	Order lastOrder;
+	BWAPI::Unit * lastTarget;
 	clock_t attackedEventDate; // if in the past, unit is not under attack
 	int lastHealth;
 	PolicyTreeNode * lastPolicyTreeNode;
@@ -60,10 +62,10 @@ public:
 
 protected:
 
-	void attackClosest(BWAPI::Unit * attacker);
 	void flee(BWAPI::Unit * unit);
 
 	BWAPI::Unit * getClosestEnemy(BWAPI::Unit * unit);
+	BWAPI::Unit * getClosestAndWeakestEnemy(BWAPI::Unit * unit);
 
   void drawStats();
   void showPlayers();

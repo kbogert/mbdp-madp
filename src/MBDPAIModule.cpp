@@ -50,8 +50,8 @@ void MBDPAIModule::onStart()
 	// Initialize planner
 
 	ArgumentHandlers::Arguments args;
-	args.infiniteHorizon = 1;
-//	args.horizon = 3;
+//	args.infiniteHorizon = 1;
+	args.horizon = 4;
 	args.dpf = "D:/CSCI-6900/problems/starcraft.dpomdp";
 //	args.problem_type = ProblemType::DT;
 	DecPOMDPDiscreteInterface & decpomdp = * ArgumentUtils::GetDecPOMDPDiscreteInterfaceFromArgs(args);
@@ -144,6 +144,11 @@ void MBDPAIModule::onFrame()
 	for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
 
 		UnitObservation * unitObs = unitObservations[(*i)->getID()];
+		if (unitObs->lastOrder == UnitObservation::Flee) {
+			// if a unit is running, don't give another order until they stop
+			unitcounter ++;
+			continue;
+		}
 
 		bool seeEnemy = getClosestEnemy(*i) != NULL;
 
@@ -196,10 +201,18 @@ void MBDPAIModule::onFrame()
 			// gonna map this to a attack
 
 			// if the unit is already attacking, then don't change
-			if (unitObs->lastOrder != UnitObservation::Attack) {
-				unitObs->lastOrder = UnitObservation::Attack;
-				attackClosest(*i);
+			Unit * closestUnit = getClosestAndWeakestEnemy(*i);
+			if (closestUnit != NULL) {
+				if (unitObs->lastOrder != UnitObservation::Attack || unitObs->lastTarget != closestUnit) {
+					(*i)->attackUnit(closestUnit);
+
+					unitObs->lastOrder = UnitObservation::Attack;
+					unitObs->lastTarget = closestUnit;
+					Broodwar->printf("Attack! at: %d, %d", closestUnit->getPosition().x(), closestUnit->getPosition().y());
+
+				}
 			}
+
 		} 
 
 		unitObs->lastPolicyTreeNode = root;
@@ -329,14 +342,29 @@ BWAPI::Unit * MBDPAIModule::getClosestEnemy(BWAPI::Unit * unit) {
 	return closestUnit;
 }
 
-void MBDPAIModule::attackClosest(BWAPI::Unit * attacker) {
+BWAPI::Unit * MBDPAIModule::getClosestAndWeakestEnemy(BWAPI::Unit * unit) {
 
-	Unit * closestUnit = getClosestEnemy(attacker);
-	  if (closestUnit != NULL) {
-		  attacker->attackUnit(closestUnit);
-		  Broodwar->printf("Attack! at: %d, %d", closestUnit->getPosition().x(), closestUnit->getPosition().y());
+	double weaknessWeight = 0.5;
 
+	// find the closest unit to me
+	double closestDistance = 1000000000;
+	BWAPI::Unit * closestUnit = NULL;
+
+    // pick a visible enemy
+	  for (std::set<Player *>::const_iterator iter = Broodwar->getPlayers().begin(); iter != Broodwar->getPlayers().end(); iter++) {
+		  if ((*iter)->isEnemy(Broodwar->self())) {
+			  for (std::set<Unit *>::const_iterator unititer = (*iter)->getUnits().begin(); unititer != (*iter)->getUnits().end(); unititer ++) {
+				  double distance = unit->getPosition().getDistance((*unititer)->getPosition());
+				  distance *= (1- weaknessWeight);
+				  distance += weaknessWeight * ((*unititer)->getShields() + (*unititer)->getHitPoints());
+				  if (distance < closestDistance) {
+					 closestDistance = distance;
+					 closestUnit = *unititer;
+				  }
+			  }
+		  }
 	  }
+	return closestUnit;
 }
 
 void MBDPAIModule::flee(BWAPI::Unit * unit) {
