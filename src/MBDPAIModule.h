@@ -32,11 +32,13 @@ public:
 		lastOrder = Idle;
 		attackedEventDate = 0;
 		lastHealth = -1;
+		lastPolicyTreeNode = NULL;
 	}
 
 	Order lastOrder;
 	clock_t attackedEventDate; // if in the past, unit is not under attack
 	int lastHealth;
+	PolicyTreeNode * lastPolicyTreeNode;
 };
 
 class MBDPAIModule : public BWAPI::AIModule

@@ -12,6 +12,7 @@
 #include <set>
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 using namespace BWAPI;
 using namespace std;
@@ -142,38 +143,67 @@ void MBDPAIModule::onFrame()
 
 	for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
 
+		UnitObservation * unitObs = unitObservations[(*i)->getID()];
+
 		bool seeEnemy = getClosestEnemy(*i) != NULL;
 
-		PolicyTreeNode * root = policyTree.find(unitcounter % policyTree.size());
-		if (root != policyTree.end()) {
+		// **** need to keep track of where in the policy tree the agent is, rather than always starting at the root!
+		PolicyTreeNode * root;
 
-			if (seeEnemy) {
-				root = root->children.find("S");
-			} else {
-				root = root->children.find("D");
+		if (unitObs->lastPolicyTreeNode != NULL) {
+			root = unitObs->lastPolicyTreeNode;
+		} else {
+			map<int, PolicyTreeNode *>::iterator iter = policyTree.find(unitcounter % policyTree.size());
+			if (iter == policyTree.end()) {
+				// can't find this unit anywhere!
+				unitcounter ++;
+				continue;
 			}
-
-			if (root != policyTree.end()) {
-
-				if (root->action == "E"){
-					// gonna map this to a flee
-
-					// if the unit is already fleeing, then don't change
-					if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Flee) {
-						unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Flee;
-						flee(*i);
-					}
-				} else {
-					// gonna map this to a attack
-
-					// if the unit is already attacking, then don't change
-					if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Attack) {
-						unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Attack;
-						attackClosest(*i);
-					}
-				} 
-			}
+			root = (*iter).second;
 		}
+
+
+		map<string, PolicyTreeNode *>::iterator iter2;
+		if (seeEnemy) {
+			iter2 = root->children.find("S");
+		} else {
+			iter2 = root->children.find("D");
+		}
+
+		if (iter2 == root->children.end()) {
+			// couldn't find a child node, must be at a leaf
+			map<int, PolicyTreeNode *>::iterator iter = policyTree.find(unitcounter % policyTree.size());
+			if (iter == policyTree.end()) {
+				// can't find this unit anywhere!
+				unitcounter ++;
+				continue;
+			}
+			root = (*iter).second;
+		} else {
+
+			root = (*iter2).second;
+		}
+
+		if (root->action == "E"){
+			// gonna map this to a flee
+
+			// if the unit is already fleeing, then don't change
+			if (unitObs->lastOrder != UnitObservation::Flee) {
+				unitObs->lastOrder = UnitObservation::Flee;
+				flee(*i);
+			}
+		} else {
+			// gonna map this to a attack
+
+			// if the unit is already attacking, then don't change
+			if (unitObs->lastOrder != UnitObservation::Attack) {
+				unitObs->lastOrder = UnitObservation::Attack;
+				attackClosest(*i);
+			}
+		} 
+
+		unitObs->lastPolicyTreeNode = root;
+
 		unitcounter ++;
 	} 
 
@@ -358,21 +388,81 @@ bool MBDPAIModule::isAttacking(BWAPI::Unit *unit) {
 
 void MBDPAIModule::parsePolicy(string &policy) {
 
-	char policyStr[512]; 
-	policy.getline(policyStr, 511);
-
-	char s0[512], s1[512], s2[512], s3[512];
+	int agentCounter = 0;
+	stringstream tempstr;
 	
-	if (sscanf(policyStr,"%511s %511s %511s %511s",s0,s1,s2,s3) <= 0)
-		return std::string();
+	tempstr << agentCounter;
+	int curPos = policy.find(string("Policy for agent ") + tempstr.str());
+	tempstr.str("");
+cout << tempstr.str();
+	while (curPos >= 0 && curPos < policy.length()) {
 
-	if (strcmp(s1, "S,") == 0 && seeEnemyObs) {
-		policy.getline(policyStr, 511);
-		return std::string(s3);
-	} else if (strcmp(s1, "D,") == 0 && ! seeEnemyObs) {
-		return std::string(s3);
+		PolicyTreeNode * agentRoot = new PolicyTreeNode();
+
+		tempstr << (agentCounter +1);
+		int nextAgent = policy.find(string("Policy for agent ") + tempstr.str());
+		tempstr.str("");
+
+		if (nextAgent < 0)
+			nextAgent = policy.length();
+
+		// read in first action, set it as agentRoot's action
+
+		int actionStart = policy.find(string("-->"), curPos) + 4;
+		agentRoot->action = policy.substr(actionStart,policy.find(string("\n"), actionStart) - actionStart);
+
+		curPos = policy.find(string(","), actionStart);
+		// for each of the following lines (until the next agent's policy) create a new policyTreeNode
+		// add it by following the observation list one by one, starting at agent root, then add the node where it ends
+		
+		while (curPos >0 && curPos < nextAgent) {
+			// found new policy Node
+			cout << curPos << endl;
+
+			PolicyTreeNode * cur = agentRoot;
+
+			PolicyTreeNode * newNode = new PolicyTreeNode();
+
+			actionStart = policy.find(string("-->"), curPos) + 4;
+
+			string obsString;
+
+			while (curPos > 0 && curPos < actionStart) {
+
+				// extract everything between the commas
+				int comma = policy.find(string(","), curPos + 2);
+				obsString = policy.substr(curPos + 2, comma - curPos -2);
+
+				curPos = comma;
+
+				// if the next comma is after actionStart then break
+				int nextComma = policy.find(string(","), comma + 2);
+				if (nextComma >= actionStart || nextComma < 0)
+					break;
+
+				// move cur down through the policyTree given the observation we just read in
+				map<string, PolicyTreeNode *>::iterator iter = cur->children.find(obsString);
+				if (iter == cur->children.end()) {
+					// error, can't find observation
+				} else {
+					cur = iter->second;
+				}
+			}
+
+			newNode->action = policy.substr(actionStart,policy.find(string("\n"), actionStart) - actionStart);
+			cur->children[obsString] = newNode;
+			if (curPos < 0) break;
+
+			curPos = policy.find(string(","), curPos + 2);
+		}
+
+
+		policyTree[agentCounter] = agentRoot;
+
+		agentCounter ++;
+		curPos = nextAgent;
+
+
 	}
-	// try parsing the next line
-	return parsePolicy(policy, seeEnemyObs);
 
 }
