@@ -394,7 +394,7 @@ void MBDPAIModule::parsePolicy(string &policy) {
 	tempstr << agentCounter;
 	int curPos = policy.find(string("Policy for agent ") + tempstr.str());
 	tempstr.str("");
-cout << tempstr.str();
+
 	while (curPos >= 0 && curPos < policy.length()) {
 
 		PolicyTreeNode * agentRoot = new PolicyTreeNode();
@@ -417,7 +417,6 @@ cout << tempstr.str();
 		
 		while (curPos >0 && curPos < nextAgent) {
 			// found new policy Node
-			cout << curPos << endl;
 
 			PolicyTreeNode * cur = agentRoot;
 
