@@ -14,6 +14,13 @@ DWORD WINAPI AnalyzeThread();
 
 #define ATTACK_STATE_LASTS_MS CLOCKS_PER_SEC
 
+class PolicyTreeNode {
+public:
+	std::string action;
+	std::map<std::string, PolicyTreeNode *> children;
+
+};
+
 class UnitObservation {
 public:
 	enum Order {
@@ -64,7 +71,6 @@ protected:
   bool show_visibility_data;
 
   PlanningUnitDecPOMDPDiscrete* planner;
-  JointPolicyPureVector * jp;
   bool initFinished;
 
   std::map<int, UnitObservation *> unitObservations;
@@ -73,4 +79,7 @@ protected:
   bool isAttacking(BWAPI::Unit * unit);
 
   std::string parsePolicy(std::stringstream & policyStr, bool seeEnemyObs);
+
+  std::map<int, PolicyTreeNode *> policyTree;
+
 };
