@@ -11,7 +11,6 @@
 #include <map>
 #include <set>
 #include <iostream>
-#include <sstream>
 #include <vector>
 
 using namespace BWAPI;
@@ -72,7 +71,7 @@ void MBDPAIModule::onStart()
 	planner->Plan();
 	JointPolicyPureVector * jp = planner->GetJointPolicyPureVector();
 
-	std::stringstream policy = stringstream(jp->SoftPrint());
+	parsePolicy(jp->SoftPrint());
 
 	initFinished = true;
 
@@ -357,7 +356,7 @@ bool MBDPAIModule::isAttacking(BWAPI::Unit *unit) {
 	return unitObservations[unit->getID()]->lastOrder == UnitObservation::Attack;
 }
 
-std::string MBDPAIModule::parsePolicy(stringstream &policy, bool seeEnemyObs) {
+void MBDPAIModule::parsePolicy(string &policy) {
 
 	char policyStr[512]; 
 	policy.getline(policyStr, 511);
