@@ -69,6 +69,11 @@ void MBDPAIModule::onStart()
 
     planner = new JESPDynamicProgrammingPlanner (params,args.horizon,&decpomdp);
 
+	planner->Plan();
+	JointPolicyPureVector * jp = planner->GetJointPolicyPureVector();
+
+	std::stringstream policy = stringstream(jp->SoftPrint());
+
 	initFinished = true;
 
 	Broodwar->printf("JESP planner initialized"); 
@@ -83,111 +88,95 @@ void MBDPAIModule::onEnd(bool isWinner)
 }
 void MBDPAIModule::onFrame()
 {  
-  if (!initFinished) return;
+	if (!initFinished) return;
 
-  if (show_visibility_data)
-  {    
-    for(int x=0;x<Broodwar->mapWidth();x++)
-    {
-      for(int y=0;y<Broodwar->mapHeight();y++)
-      {
-        if (Broodwar->isExplored(x,y))
-        {
-          if (Broodwar->isVisible(x,y))
-            Broodwar->drawDotMap(x*32+16,y*32+16,Colors::Green);
-          else
-            Broodwar->drawDotMap(x*32+16,y*32+16,Colors::Blue);
-        }
-        else
-          Broodwar->drawDotMap(x*32+16,y*32+16,Colors::Red);
-      }
-    }
-  }
-
-  if (Broodwar->isReplay())
-    return;
-
-
-
-
-	  static long long counter = 0;
-	  counter ++;
-
-	  // update planner, run plan()
-
-	  if (counter % 30 == 1) {
-
-		planner->Plan();
-		jp = planner->GetJointPolicyPureVector();
-	  }
-
-	  // perform observations, update state variables
-		// right now we only observe our own units
-
-
-		for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
-
-			if (unitObservations.find((*i)->getID()) == unitObservations.end()) {
-				unitObservations[(*i)->getID()] = new UnitObservation();
-			}
-			UnitObservation * obs = unitObservations[(*i)->getID()];
-
-			if ((*i)->isIdle()) {
-				obs->lastOrder = UnitObservation::Idle;
-			}
-
-			if (obs->lastHealth > (*i)->getShields() + (*i)->getHitPoints()) {
-				// unit has just been attacked
-				obs->attackedEventDate = clock() + ATTACK_STATE_LASTS_MS;
-			}
-			obs->lastHealth = (*i)->getShields() + (*i)->getHitPoints(); 
-		}
-
-	  drawStats();
-
-
-	  
-	  // enact policy only once every 15 frames
-
-		if (counter % 15 != 1) return;
-
-//		Broodwar->printf("Joint Action: %s", planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief().c_str());
-
-		int unitcounter = 0;
-
-		std::stringstream policy = stringstream(jp->SoftPrint());
-		for (int i = 0; i < jp->GetNrDomainElements(0); i ++) {
-			const JointAction * ja = planner->GetJointAction(jp->GetJointActionIndex(i));
-			ja->Print();
-		}
-
-		for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
-
-			bool seeEnemy = getClosestEnemy(*i) != NULL;
-
-
-			std::string action = parsePolicy(policy, seeEnemy);
-			Broodwar->printf("action: %s", action.c_str());
-
-			if (action == "E"){
-				// gonna map this to a flee
-
-				// if the unit is already fleeing, then don't change
-				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Flee) {
-					unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Flee;
-					flee(*i);
+	if (show_visibility_data)
+	{    
+		for(int x=0;x<Broodwar->mapWidth();x++)
+		{
+			for(int y=0;y<Broodwar->mapHeight();y++)
+			{
+				if (Broodwar->isExplored(x,y))
+				{
+					if (Broodwar->isVisible(x,y))
+						Broodwar->drawDotMap(x*32+16,y*32+16,Colors::Green);
+					else
+						Broodwar->drawDotMap(x*32+16,y*32+16,Colors::Blue);
 				}
+				else
+					Broodwar->drawDotMap(x*32+16,y*32+16,Colors::Red);
+			}
+		}
+	}
+
+	if (Broodwar->isReplay())
+		return;
+
+	// perform observations, update state variables
+	// right now we only observe our own units
+
+
+	for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
+
+		if (unitObservations.find((*i)->getID()) == unitObservations.end()) {
+			unitObservations[(*i)->getID()] = new UnitObservation();
+		}
+		UnitObservation * obs = unitObservations[(*i)->getID()];
+
+		if ((*i)->isIdle()) {
+			obs->lastOrder = UnitObservation::Idle;
+		}
+
+		if (obs->lastHealth > (*i)->getShields() + (*i)->getHitPoints()) {
+			// unit has just been attacked
+			obs->attackedEventDate = clock() + ATTACK_STATE_LASTS_MS;
+		}
+		obs->lastHealth = (*i)->getShields() + (*i)->getHitPoints(); 
+	}
+
+	drawStats();
+
+
+	//		Broodwar->printf("Joint Action: %s", planner->GetJointAction(jp->GetJointActionIndex(0))->SoftPrintBrief().c_str());
+
+	int unitcounter = 0;
+
+	for(std::set<Unit*>::const_iterator i=Broodwar->self()->getUnits().begin();i!=Broodwar->self()->getUnits().end();i++) {
+
+		bool seeEnemy = getClosestEnemy(*i) != NULL;
+
+		PolicyTreeNode * root = policyTree.find(unitcounter % policyTree.size());
+		if (root != policyTree.end()) {
+
+			if (seeEnemy) {
+				root = root->children.find("S");
 			} else {
-				// gonna map this to a attack
+				root = root->children.find("D");
+			}
 
-				// if the unit is already attacking, then don't change
-				if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Attack) {
-					unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Attack;
-					attackClosest(*i);
-				}
-			} 
-			unitcounter ++;
-		} 
+			if (root != policyTree.end()) {
+
+				if (root->action == "E"){
+					// gonna map this to a flee
+
+					// if the unit is already fleeing, then don't change
+					if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Flee) {
+						unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Flee;
+						flee(*i);
+					}
+				} else {
+					// gonna map this to a attack
+
+					// if the unit is already attacking, then don't change
+					if (unitObservations[(*i)->getID()]->lastOrder != UnitObservation::Attack) {
+						unitObservations[(*i)->getID()]->lastOrder = UnitObservation::Attack;
+						attackClosest(*i);
+					}
+				} 
+			}
+		}
+		unitcounter ++;
+	} 
 
 }
 
