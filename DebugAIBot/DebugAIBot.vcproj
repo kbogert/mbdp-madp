@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\MBDPAIBot\BWAPI.lib ..\MADP_dll\debug\MBDPAIBot.lib"
+				AdditionalDependencies="..\MBDPAIBot2\BWAPI.lib ..\MADP_dll\debug\MBDPAIBot.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\MBDPAIBot\BWAPI.lib ..\MADP_dll\debug\MBDPAIBot.lib"
+				AdditionalDependencies="..\MBDPAIBot2\BWAPI.lib ..\MADP_dll\debug\MBDPAIBot.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
