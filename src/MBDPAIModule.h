@@ -25,7 +25,8 @@ public:
 	enum Order {
 		Attack,
 		Flee,
-		Idle
+		Idle,
+		Explore
 	};
 
 	UnitObservation() {
@@ -78,8 +79,10 @@ protected:
 
   std::map<int, UnitObservation *> unitObservations;
 
+  void MBDPAIModule::Explore(BWAPI::Unit * explorer);
   bool isUnderAttack(BWAPI::Unit * unit);
   bool isAttacking(BWAPI::Unit * unit);
+  void MBDPAIModule::AttackUnit(BWAPI::Unit * attacker, BWAPI::Unit * target);
 
   void parsePolicy(std::string & policyStr);
 

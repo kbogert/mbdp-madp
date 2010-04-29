@@ -152,6 +152,16 @@ void MBDPAIModule::onFrame()
 
 		bool seeEnemy = getClosestEnemy(*i) != NULL;
 
+		
+		if (!seeEnemy) {
+			if (unitObs->lastOrder != UnitObservation::Explore) {
+				Explore(*i);
+				unitObs->lastOrder = UnitObservation::Explore;
+			}
+			unitcounter ++;
+			continue;
+		}
+
 		// **** need to keep track of where in the policy tree the agent is, rather than always starting at the root!
 		PolicyTreeNode * root;
 
@@ -169,7 +179,7 @@ void MBDPAIModule::onFrame()
 
 
 		map<string, PolicyTreeNode *>::iterator iter2;
-		if (seeEnemy) {
+		if (unitObs->attackedEventDate > clock()) {
 			iter2 = root->children.find("S");
 		} else {
 			iter2 = root->children.find("D");
@@ -189,6 +199,7 @@ void MBDPAIModule::onFrame()
 			root = (*iter2).second;
 		}
 
+
 		if (root->action == "E"){
 			// gonna map this to a flee
 
@@ -202,14 +213,15 @@ void MBDPAIModule::onFrame()
 
 			// if the unit is already attacking, then don't change
 			Unit * closestUnit = getClosestAndWeakestEnemy(*i);
-			if (closestUnit != NULL) {
-				if (unitObs->lastOrder != UnitObservation::Attack || unitObs->lastTarget != closestUnit) {
-					(*i)->attackUnit(closestUnit);
+			if (unitObs->lastOrder != UnitObservation::Attack || unitObs->lastTarget != closestUnit) {
+				AttackUnit(*i, closestUnit);
 
-					unitObs->lastOrder = UnitObservation::Attack;
-					unitObs->lastTarget = closestUnit;
+				unitObs->lastOrder = UnitObservation::Attack;
+				unitObs->lastTarget = closestUnit;
+				if (closestUnit == NULL) {
+
+				} else {
 					Broodwar->printf("Attack! at: %d, %d", closestUnit->getPosition().x(), closestUnit->getPosition().y());
-
 				}
 			}
 
@@ -367,6 +379,24 @@ BWAPI::Unit * MBDPAIModule::getClosestAndWeakestEnemy(BWAPI::Unit * unit) {
 	return closestUnit;
 }
 
+void MBDPAIModule::Explore(BWAPI::Unit * explorer) {
+		// explore in a random direction
+		int x = rand() % (Broodwar->mapWidth());
+		int y = rand() % (Broodwar->mapHeight());
+
+		TilePosition pos(x, y);
+		Broodwar->printf("Explore to: %d, %d", x, y);
+		explorer->rightClick(pos);
+}
+
+
+void MBDPAIModule::AttackUnit(BWAPI::Unit * attacker, BWAPI::Unit * target) {
+	if (target != NULL) {
+		attacker->attackUnit(target);
+	}
+
+}
+
 void MBDPAIModule::flee(BWAPI::Unit * unit) {
 
 	// pick a point in the opposite direction from the closest enemy
@@ -378,7 +408,7 @@ void MBDPAIModule::flee(BWAPI::Unit * unit) {
 		int d_x = 1000;
 		int d_y = 1000;
 
-		while ((abs(d_x) > 200 || abs(d_y) > 200) && mult > 0) {
+		while ((abs(d_x) > 200 || abs(d_y) > 200) && mult > 0 ) {
 			d_x = (unit->getPosition().x() - closestEnemy->getPosition().x()) * mult;
 			d_y = (unit->getPosition().y() - closestEnemy->getPosition().y()) * mult;
 			x = d_x + unit->getPosition().x();
@@ -386,12 +416,10 @@ void MBDPAIModule::flee(BWAPI::Unit * unit) {
 			mult --;
 		}
 
-		Position pos(x, y);
+		Position pos(max(0,min(x,Broodwar->mapWidth() * 32)), max(0,min(y,Broodwar->mapHeight() * 32)));
 		unit->rightClick(pos);
 
 		Broodwar->printf("RUN AWAY! to: %d, %d (Mult %d)", pos.x(), pos.y(), mult);
-
-
 
 	}
 }
