@@ -1,0 +1,126 @@
+# starcraft.dpomdp 
+# ----------- 
+# Christopher Jackson - moxie@uga.edu 
+# Kenneth Bogert - kbogert@uga.edu 
+# 2010-04-23 
+# 
+# This is a Dec-POMDP model for our StarCraft (TM) Problem. 
+# First we note a few important things: 
+# 
+# 1) the file format is case-sensitive 
+# 2) the first entries in this file are: 
+# agents 
+# discount 
+# values 
+# states 
+# start 
+# actions 
+# observations 
+# 
+#
+agents: Unit1 Unit2
+discount: 0.9
+values: reward
+# 
+# 
+# States 
+# swin - agent's side is winning
+# sneut - both sides about the same
+# slose - agent's side is losing
+states: swin sneut slose
+start: sneut
+# 
+#
+# Actions 
+# Each agent has Attack (A) or Escape (E) (4 possible joint actions)
+actions:
+A E
+A E
+#
+# 
+# Observations 
+# Each agent has Not being attacked (NB) or Being Attacked (B) (4 possible joint observations) 
+observations:  
+NB B
+NB B
+#
+#
+# Transition probabilities 
+# Pr(s'|ja, s) - a |S|x|S| matrix
+# T: <a1 a2...an> : <start-state> : <end-state> : %f
+T: * :
+uniform
+# 
+# It is very unlikely (only 10% of the time) that with joint action <A A> 
+# the enemy is not being attacked in any successor state. 
+# Note: 4 successor states have the enemy not being attacked.
+#       So these 4 states added together make the 10% (i.e. 2.5% * 4)
+#
+O: * : 
+uniform
+#
+O: A A : swin : NB B : 0.225 
+O: A A : swin : NB NB : 0.45 
+O: A A : swin : B B : 0.10 
+O: A A : swin : B NB : 0.225 
+O: A E : swin : NB B : 0.005 
+O: A E : swin : NB NB : 0.145
+O: A E : swin : B B : 0.35 
+O: A E : swin : B NB : 0.50 
+O: E A : swin : NB B : 0.50 
+O: E A : swin : NB NB : 0.145
+O: E A : swin : B B : 0.35 
+O: E A : swin : B NB : 0.005
+O: E E : swin : NB B : 0.2425 
+O: E E : swin : NB NB : 0.50 
+O: E E : swin : B B : 0.015 
+O: E E : swin : B NB : 0.2425 
+#
+O: A A : sneut : NB B : 0.1745
+O: A A : sneut : NB NB : 0.001 
+O: A A : sneut : B B : 0.65
+O: A A : sneut : B NB : 0.1745
+O: A E : sneut : NB B : 0.001 
+O: A E : sneut : NB NB : 0.10
+O: A E : sneut : B B : 0.499 
+O: A E : sneut : B NB : 0.40 
+O: E A : sneut : NB B : 0.40
+O: E A : sneut : NB NB : 0.10
+O: E A : sneut : B B : 0.499 
+O: E A : sneut : B NB : 0.001
+O: E E : sneut : NB B : 0.295 
+O: E E : sneut : NB NB : 0.40 
+O: E E : sneut : B B : 0.010 
+O: E E : sneut : B NB : 0.295 
+#
+O: A A : slose : NB B : 0.04995
+O: A A : slose : NB NB : 0.0001 
+O: A A : slose : B B : 0.90
+O: A A : slose : B NB : 0.04995
+O: A E : slose : NB B : 0.001 
+O: A E : slose : NB NB : 0.099
+O: A E : slose : B B : 0.20
+O: A E : slose : B NB : 0.70 
+O: E A : slose : NB B : 0.70
+O: E A : slose : NB NB : 0.099
+O: E A : slose : B B : 0.20
+O: E A : slose : B NB : 0.001
+O: E E : slose : NB B : 0.30 
+O: E E : slose : NB NB : 0.10 
+O: E E : slose : B B : 0.3 
+O: E E : slose : B NB : 0.30 
+#
+R: A A : swin : * : * : 5 
+R: A E : swin : * : * : 2 
+R: E A : swin : * : * : 2 
+R: E E : swin : * : * : 0
+# 
+R: A A : sneut : * : * : 3
+R: A E : sneut : * : * : 1 
+R: E A : sneut : * : * : 1 
+R: E E : sneut : * : * : 0 
+# 
+R: A A : slose : * : * : 0 
+R: A E : slose : * : * : 2 
+R: E A : slose : * : * : 2 
+R: E E : slose : * : * : 5
