@@ -67,6 +67,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MBDPAIBot2", "..\MBDPAIBot2
 		{8CBD67F9-ACFC-41EB-B1D4-956335C803F5} = {8CBD67F9-ACFC-41EB-B1D4-956335C803F5}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TrivialAIBot", "..\TrivialAIBot\TrivialAIBot.vcproj", "{EE5EB110-A45E-456A-A74A-7E2B87C2EE84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -128,6 +130,10 @@ Global
 		{324A17D3-092A-4E76-BF4A-8F5458FC4331}.Debug|Win32.Build.0 = Debug|Win32
 		{324A17D3-092A-4E76-BF4A-8F5458FC4331}.Release|Win32.ActiveCfg = Release|Win32
 		{324A17D3-092A-4E76-BF4A-8F5458FC4331}.Release|Win32.Build.0 = Release|Win32
+		{EE5EB110-A45E-456A-A74A-7E2B87C2EE84}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EE5EB110-A45E-456A-A74A-7E2B87C2EE84}.Debug|Win32.Build.0 = Debug|Win32
+		{EE5EB110-A45E-456A-A74A-7E2B87C2EE84}.Release|Win32.ActiveCfg = Release|Win32
+		{EE5EB110-A45E-456A-A74A-7E2B87C2EE84}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
