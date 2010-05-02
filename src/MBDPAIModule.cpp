@@ -53,7 +53,7 @@ void MBDPAIModule::onStart()
 	ArgumentHandlers::Arguments args;
 //	args.infiniteHorizon = 1;
 	args.horizon = 5;
-	args.dpf = "D:/CSCI-6900/problems/starcraft-dragoons.dpomdp";
+	args.dpf = "D:/demo.dpomdp";
 //	args.problem_type = ProblemType::DT;
 	DecPOMDPDiscreteInterface & decpomdp = * ArgumentUtils::GetDecPOMDPDiscreteInterfaceFromArgs(args);
     
