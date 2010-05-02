@@ -23,6 +23,7 @@ MBDPAIModule::MBDPAIModule() {
 
 void MBDPAIModule::onStart()
 {
+	srand(time(0));
   // Enable some cheat flags
   Broodwar->enableFlag(Flag::UserInput);
   // Uncomment to enable complete map information
@@ -51,8 +52,8 @@ void MBDPAIModule::onStart()
 
 	ArgumentHandlers::Arguments args;
 //	args.infiniteHorizon = 1;
-	args.horizon = 4;
-	args.dpf = "D:/CSCI-6900/problems/starcraft.dpomdp";
+	args.horizon = 5;
+	args.dpf = "D:/CSCI-6900/problems/starcraft-dragoons.dpomdp";
 //	args.problem_type = ProblemType::DT;
 	DecPOMDPDiscreteInterface & decpomdp = * ArgumentUtils::GetDecPOMDPDiscreteInterfaceFromArgs(args);
     
@@ -180,9 +181,9 @@ void MBDPAIModule::onFrame()
 
 		map<string, PolicyTreeNode *>::iterator iter2;
 		if (unitObs->attackedEventDate > clock()) {
-			iter2 = root->children.find("S");
+			iter2 = root->children.find("B");
 		} else {
-			iter2 = root->children.find("D");
+			iter2 = root->children.find("NB");
 		}
 
 		if (iter2 == root->children.end()) {
@@ -408,7 +409,7 @@ void MBDPAIModule::flee(BWAPI::Unit * unit) {
 		int d_x = 1000;
 		int d_y = 1000;
 
-		while ((abs(d_x) > 200 || abs(d_y) > 200) && mult > 0 ) {
+		while ((abs(d_x) > 100 || abs(d_y) > 100) && mult > 0 ) {
 			d_x = (unit->getPosition().x() - closestEnemy->getPosition().x()) * mult;
 			d_y = (unit->getPosition().y() - closestEnemy->getPosition().y()) * mult;
 			x = d_x + unit->getPosition().x();

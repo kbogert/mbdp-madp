@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\base;..\src\include;..\src\boost;..\src\support;..\src\argp-standalone-1.3;..\src\parser"
+				AdditionalIncludeDirectories="..\src\base;..\src\include;..\src\boost;..\src\support;..\src\argp-standalone-1.3;..\src\parser;..\src\planning"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_SECURE_SCL=0;_HAS_ITERATOR_DEBUGGING=0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\src\base;..\src\include;..\src\boost;..\src\support;..\src\argp-standalone-1.3;..\src\parser"
+				AdditionalIncludeDirectories="..\src\base;..\src\include;..\src\boost;..\src\support;..\src\argp-standalone-1.3;..\src\parser;..\src\planning"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_SECURE_SCL=0"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -285,6 +285,10 @@
 			</File>
 			<File
 				RelativePath="..\src\planning\JPPVValuePair.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\LINUX\src\planning\MBDPPlanner.cpp"
 				>
 			</File>
 			<File
@@ -591,6 +595,10 @@
 			</File>
 			<File
 				RelativePath="..\src\planning\JPPVValuePair.h"
+				>
+			</File>
+			<File
+				RelativePath="..\LINUX\src\planning\MBDPPlanner.h"
 				>
 			</File>
 			<File
