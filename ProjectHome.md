@@ -1,0 +1,1 @@
+Extending the Multi-Agent Decision Process toolbox with the Memory Bounded Dynamic Programming algorithm, which will be used to create a bot for the StarCraft AI competition.
